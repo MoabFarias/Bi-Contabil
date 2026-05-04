@@ -1,0 +1,23 @@
+{
+  "planilha_transacoes": "",
+  "colunas_transacoes": {
+    "id_lancamento": "",
+    "data_lancamento": "",
+    "conta_contabil": "",
+    "descricao": "",
+    "documento": "",
+    "centro_custo": "",
+    "debito": "",
+    "credito": "",
+    "valor": "",
+    "tipo_dc": ""
+  },
+  "colunas_balancete": {
+    "conta_contabil": "",
+    "descricao_conta": "",
+    "saldo_inicial": "",
+    "debito": "",
+    "credito": "",
+    "saldo_final": ""
+  }
+}
