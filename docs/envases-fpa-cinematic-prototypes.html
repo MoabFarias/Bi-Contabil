@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root{
+     :root,[data-theme="dark"]{
       --env-red:#911427;
       --env-white:#FFFFFF;
       --env-black:#000000;
@@ -24,14 +24,41 @@
       --muted:#bdb5ab;
       --border:rgba(255,255,255,.10);
       --shadow:0 20px 60px rgba(0,0,0,.35);
+      --danger-text:#f0a8b3;
+      --positive-text:#9ed4c1;
+      --chip-bg:rgba(194,210,228,.12);
+      --chip-text:var(--env-blue);
       --radius:20px;
       --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;--space-6:24px;--space-8:32px;--space-10:40px;--space-12:48px;
       --font-display:'Plus Jakarta Sans', Arial, sans-serif;
       --font-body:'IBM Plex Sans', Arial, sans-serif;
     }
+
+    [data-theme="light"]{
+      --env-red:#7f1222;
+      --env-white:#FFFFFF;
+      --env-black:#000000;
+      --env-gray:#6f6f6f;
+      --env-blue:#C2D2E4;
+      --env-green:#195945;
+      --env-beige:#C7BFB1;
+      --bg:#f6f1eb;
+      --surface:#ffffff;
+      --surface-2:#f4ede7;
+      --surface-3:#ebe2db;
+      --text:#151316;
+      --muted:#5e5550;
+      --border:rgba(0,0,0,.10);
+      --shadow:0 20px 60px rgba(30,20,20,.10);
+      --danger-text:#7f1222;
+      --positive-text:#144937;
+      --chip-bg:rgba(127,18,34,.10);
+      --chip-text:#6e1220;
+    }
+
     *{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
-    body{font-family:var(--font-body);background:radial-gradient(circle at top right, rgba(145,20,39,.16), transparent 30%),linear-gradient(180deg,#090909 0%, #111013 100%);color:var(--text);min-height:100vh}
+    body{font-family:var(--font-body);background:radial-gradient(circle at top right, rgba(145,20,39,.12), transparent 30%),linear-gradient(180deg,var(--bg) 0%, color-mix(in srgb, var(--bg) 84%, #000 16%) 100%);color:var(--text);min-height:100vh}
     a{color:inherit;text-decoration:none}
     .shell{max-width:1500px;margin:0 auto;padding:32px 24px 96px}
     .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:32px;padding:18px 20px;border:1px solid var(--border);border-radius:18px;background:rgba(255,255,255,.03);backdrop-filter:blur(14px);position:sticky;top:12px;z-index:5}
@@ -42,7 +69,7 @@
     .brand-mark:after{width:14px;height:4px;left:10px;top:24px}
     .brand h1{font:800 20px var(--font-display);letter-spacing:.02em}
     .brand p,.nav a,.meta{color:var(--muted);font-size:14px}
-    .nav{display:flex;gap:10px;flex-wrap:wrap}
+    .nav{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
     .nav a{padding:10px 14px;border:1px solid var(--border);border-radius:999px;background:rgba(255,255,255,.03)}
     .hero{display:grid;grid-template-columns:1.4fr .8fr;gap:24px;align-items:stretch;margin-bottom:28px}
     .hero-card,.panel{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.025));border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow)}
@@ -68,8 +95,8 @@
     .kpi{display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(180deg,rgba(145,20,39,.16),rgba(255,255,255,.02))}
     .kpi .value{font:800 clamp(28px,3vw,44px) var(--font-display)}
     .delta{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;font-size:13px;width:max-content}
-    .delta.positive{background:rgba(25,89,69,.18);color:#9ed4c1}
-    .delta.negative{background:rgba(145,20,39,.18);color:#f0a8b3}
+    .delta.positive{background:color-mix(in srgb, var(--env-green) 18%, transparent);color:var(--positive-text)}
+    .delta.negative{background:color-mix(in srgb, var(--env-red) 18%, transparent);color:var(--danger-text)}
     .muted{color:var(--muted)}
     .chart{display:flex;align-items:end;gap:10px;height:210px;padding-top:20px}
     .bar{flex:1;border-radius:12px 12px 4px 4px;background:linear-gradient(180deg, rgba(194,210,228,.95), rgba(145,20,39,.72));box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
@@ -82,7 +109,7 @@
     .table th,.table td{padding:12px 10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}
     .table th{color:var(--muted);font-weight:600}
     .table tr:hover td{background:rgba(255,255,255,.02)}
-    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;font-size:12px;background:rgba(194,210,228,.12);color:var(--env-blue)}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;font-size:12px;background:var(--chip-bg);color:var(--chip-text);border:1px solid var(--border)}
     .balance-wrap{display:grid;grid-template-columns:1fr 1fr;gap:18px}
     .stack{display:grid;gap:12px}
     .account{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
@@ -120,6 +147,7 @@
         <a href="#balancete">Balancete</a>
         <a href="#dre">DRE</a>
         <a href="#balanco">Balanço</a>
+              <button id="themeToggle" aria-label="Alternar tema" style="padding:10px 14px;border:1px solid var(--border);border-radius:999px;background:rgba(255,255,255,.03);color:var(--text);font:600 14px var(--font-body);">Alternar tema</button>
       </nav>
     </header>
 
@@ -324,5 +352,20 @@
 
     <p class="footer-note">Protótipos conceituais para validação de narrativa, layout e linguagem visual. Os números são fictícios e servem apenas para demonstrar estrutura, composição e direção estética para futuros dashboards em Python + HTML.</p>
   </div>
+
+<script>
+(function(){
+  const root=document.documentElement;
+  const btn=document.getElementById('themeToggle');
+  const setLabel=()=>btn.textContent=root.getAttribute('data-theme')==='dark'?'Tema claro':'Tema escuro';
+  setLabel();
+  btn.addEventListener('click',()=>{
+    const next=root.getAttribute('data-theme')==='dark'?'light':'dark';
+    root.setAttribute('data-theme',next);
+    setLabel();
+  });
+})();
+</script>
+
 </body>
 </html>
