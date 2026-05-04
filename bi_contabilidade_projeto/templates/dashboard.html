@@ -2,51 +2,274 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BI Contábil - Dashboard</title>
     <style>
-        body { font-family: Arial; background: #f4f6f8; margin: 0; padding: 20px; }
-        h1 { color: #333; }
-        .card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        button { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
-        .btn { background: #2d89ef; color: white; }
-        .btn:hover { background: #1b5fa7; }
-        .btn-download { background: #28a745; }
+        :root {
+            --bg: #0f172a;
+            --panel: #111827;
+            --card: #ffffff;
+            --muted: #64748b;
+            --text: #0f172a;
+            --blue: #2563eb;
+            --green: #16a34a;
+            --amber: #d97706;
+            --red: #dc2626;
+            --border: #e5e7eb;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f3f4f6;
+            color: var(--text);
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: var(--bg);
+            color: white;
+            padding: 24px 18px;
+        }
+
+        .brand {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: #cbd5e1;
+            font-size: 13px;
+            margin-bottom: 28px;
+        }
+
+        .nav-item {
+            padding: 11px 12px;
+            border-radius: 8px;
+            color: #dbeafe;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .nav-item.active { background: #1d4ed8; color: white; }
+
+        .main { padding: 28px; }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        h1 { margin: 0; font-size: 28px; }
+        .muted { color: var(--muted); font-size: 14px; }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        form { display: inline; }
+
+        button, .button-link {
+            border: none;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+        }
+
+        .btn-primary { background: var(--blue); color: white; }
+        .btn-success { background: var(--green); color: white; }
+        .btn-neutral { background: #e5e7eb; color: #111827; }
+        .btn-warning { background: var(--amber); color: white; }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+        }
+
+        .card-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .metric {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 9px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status.ok { background: #dcfce7; color: #166534; }
+        .status.warn { background: #fef3c7; color: #92400e; }
+        .status.info { background: #dbeafe; color: #1e40af; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            border-bottom: 1px solid var(--border);
+            padding: 10px 8px;
+            text-align: left;
+        }
+
+        th { color: var(--muted); font-size: 12px; text-transform: uppercase; }
+        .right { text-align: right; }
+
+        @media (max-width: 1100px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .grid-4, .grid-3 { grid-template-columns: 1fr; }
+            .header { flex-direction: column; gap: 16px; }
+        }
     </style>
 </head>
 <body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="brand">BI Contábil</div>
+        <div class="subtitle">Controladoria, Balancete, BP, DRE e Custos</div>
+        <div class="nav-item active">Dashboard</div>
+        <div class="nav-item">Balancete</div>
+        <div class="nav-item">Validação</div>
+        <div class="nav-item">DRE / BP</div>
+        <div class="nav-item">Custo Produção</div>
+    </aside>
 
-<h1>Dashboard BI Contábil</h1>
+    <main class="main">
+        <section class="header">
+            <div>
+                <h1>Dashboard Operacional</h1>
+                <p class="muted">Visão consolidada da carga, validação e geração do balancete.</p>
+            </div>
+            <div class="actions">
+                <form method="post" action="/atualizar-dados"><button class="btn-primary">Atualizar dados</button></form>
+                <form method="post" action="/validar-modelo"><button class="btn-neutral">Validar modelo</button></form>
+                <form method="post" action="/gerar-balancete"><button class="btn-warning">Gerar balancete</button></form>
+                <a class="button-link btn-success" href="/download-balancete">Baixar Excel</a>
+            </div>
+        </section>
 
-<div class="card">
-    <h2>Ações</h2>
-    <form method="post" action="/atualizar-dados"><button class="btn">Atualizar Dados</button></form>
-    <form method="post" action="/validar-modelo"><button class="btn">Validar Modelo</button></form>
-    <form method="post" action="/gerar-balancete"><button class="btn">Gerar Balancete</button></form>
-    <a href="/download-balancete"><button class="btn-download">Baixar Balancete</button></a>
+        <section class="grid-4">
+            <div class="card">
+                <div class="card-title">Status da carga</div>
+                <div class="metric">{{ carga.get('status', 'N/A') }}</div>
+                <span class="status info">{{ carga.get('ultima_atualizacao', carga.get('data_execucao', 'Sem carga')) }}</span>
+            </div>
+            <div class="card">
+                <div class="card-title">Período visualizado</div>
+                <div class="metric">{{ balancete.get('periodo_visualizacao_fim', 'N/A') }}</div>
+                <p class="muted">De {{ balancete.get('periodo_visualizacao_inicio', 'N/A') }} até {{ balancete.get('periodo_visualizacao_fim', 'N/A') }}</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Linhas visualizadas</div>
+                <div class="metric">{{ balancete.get('linhas_fato_visualizadas', balancete.get('qtd_linhas_analitico', 'N/A')) }}</div>
+                <p class="muted">Ocultadas por período: {{ balancete.get('linhas_fato_ocultadas_por_periodo', 0) }}</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Centro de custo por regra</div>
+                <div class="metric">{{ balancete.get('linhas_ccusto_regra_automatica', 'N/A') }}</div>
+                <p class="muted">Conta 3 → Administração / Conta 4 → Produção</p>
+            </div>
+        </section>
+
+        <section class="grid-3">
+            <div class="card">
+                <div class="card-title">Débitos</div>
+                <div class="metric">{{ balancete.get('total_debitos', 0) }}</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Créditos</div>
+                <div class="metric">{{ balancete.get('total_creditos', 0) }}</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Movimento líquido</div>
+                <div class="metric">{{ balancete.get('total_movimento', 0) }}</div>
+                <span class="status ok">Esperado próximo de zero</span>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Resumo da lógica contábil aplicada</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Área</th>
+                        <th>Regra aplicada</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Conta auxiliar</td>
+                        <td>Obrigatória somente quando DimConta.USA_CONTA_AUX = S</td>
+                        <td><span class="status ok">Validado</span></td>
+                    </tr>
+                    <tr>
+                        <td>BP / DRE</td>
+                        <td>Mapeamento por prefixo hierárquico em ParamBP_DRE</td>
+                        <td><span class="status ok">Validado</span></td>
+                    </tr>
+                    <tr>
+                        <td>Conta 4</td>
+                        <td>Custo de produção separado da DRE; impacto via CPV na conta 3</td>
+                        <td><span class="status ok">Aplicado</span></td>
+                    </tr>
+                    <tr>
+                        <td>Períodos futuros</td>
+                        <td>Carrega tudo, mas visualiza mês corrente + 2 meses</td>
+                        <td><span class="status info">{{ balancete.get('modo_limite_visualizacao', 'N/A') }}</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
 </div>
-
-<div class="grid">
-
-    <div class="card">
-        <h3>Carga</h3>
-        <p>Última carga: {{ carga.get('data_execucao', 'N/A') }}</p>
-        <p>Status: {{ carga.get('status', 'N/A') }}</p>
-    </div>
-
-    <div class="card">
-        <h3>Validação</h3>
-        <p>Status: OK</p>
-    </div>
-
-    <div class="card">
-        <h3>Balancete</h3>
-        <p>Período exibido: {{ balancete.get('periodo_visualizacao_inicio') }} até {{ balancete.get('periodo_visualizacao_fim') }}</p>
-        <p>Débitos: {{ balancete.get('total_debitos') }}</p>
-        <p>Créditos: {{ balancete.get('total_creditos') }}</p>
-    </div>
-
-</div>
-
 </body>
 </html>
