@@ -15,7 +15,7 @@ OUTPUTS_DIR = ROOT_DIR / "outputs"
 TEMPLATES_DIR = ROOT_DIR / "templates"
 STATIC_DIR = ROOT_DIR / "static"
 
-app = FastAPI(title="BI Contabil")
+app = FastAPI(title="Envases FP&A Cinematic Lab")
 
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
@@ -49,6 +49,14 @@ def dashboard(request: Request):
         LOGS_DIR / "balancete_resumo.json",
         {"status": "sem_balancete", "mensagem": "Nenhum balancete gerado."},
     )
+    dre_resumo = ler_json(
+        LOGS_DIR / "dre_resumo.json",
+        {"status": "sem_dre", "mensagem": "Nenhuma DRE gerada."},
+    )
+    dre_detalhe = ler_json(
+        LOGS_DIR / "dre_detalhe.json",
+        {"grupos": []},
+    )
 
     return templates.TemplateResponse(
         request=request,
@@ -57,6 +65,8 @@ def dashboard(request: Request):
             "carga": carga,
             "validacao": validacao,
             "balancete": balancete,
+            "dre_resumo": dre_resumo,
+            "dre_detalhe": dre_detalhe,
         },
     )
 
@@ -79,6 +89,12 @@ def gerar_balancete():
     return RedirectResponse(url="/", status_code=303)
 
 
+@app.post("/gerar-dre")
+def gerar_dre():
+    executar_script("motor_dre.py")
+    return RedirectResponse(url="/", status_code=303)
+
+
 @app.get("/download-balancete")
 def download_balancete():
     arquivo = OUTPUTS_DIR / "balancete_mensal.xlsx"
@@ -87,5 +103,17 @@ def download_balancete():
     return FileResponse(
         path=arquivo,
         filename="balancete_mensal.xlsx",
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+
+
+@app.get("/download-dre")
+def download_dre():
+    arquivo = OUTPUTS_DIR / "dre_gerencial.xlsx"
+    if not arquivo.exists():
+        return HTMLResponse("DRE ainda nao foi gerada.", status_code=404)
+    return FileResponse(
+        path=arquivo,
+        filename="dre_gerencial.xlsx",
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
