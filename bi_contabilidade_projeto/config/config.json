@@ -1,0 +1,7 @@
+{
+  "base_path": "C:\\Users\\mfarias\\OneDrive - CRISTALPET\\POWER BI\\Projetos\\Contabilidade\\Dataset",
+  "arquivo_principal": "Data set - contabilidade-gerencial-html.xlsx",
+  "usar_excel_xlsx": true,
+  "atualizar_powerquery_antes_da_carga": false,
+  "salvar_log_carga": true
+}
