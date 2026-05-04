@@ -1,0 +1,135 @@
+{
+    "ultima_atualizacao": "2026-05-04 12:15:19",
+    "status": "sucesso",
+    "origem": "Data set - contabilidade-gerencial-html.xlsx",
+    "tempo_processamento_segundos": 22.47,
+    "arquivo": {
+        "arquivo": "Data set - contabilidade-gerencial-html.xlsx",
+        "caminho": "C:\\Users\\mfarias\\OneDrive - CRISTALPET\\POWER BI\\Projetos\\Contabilidade\\Dataset\\Data set - contabilidade-gerencial-html.xlsx",
+        "arquivo_modificado_em": "2026-05-04 11:44:38",
+        "tamanho_mb": 9.33
+    },
+    "abas_processadas": [
+        "FatoLancamentoContabil",
+        "DimConta",
+        "DimCentroCusto",
+        "DimItemContaAux",
+        "DimContaAux",
+        "ParamBP_DRE",
+        "Dim_CUSTO_PRODUCAO_MAPA"
+    ],
+    "resumo_abas": {
+        "FatoLancamentoContabil": {
+            "linhas": 112825,
+            "colunas": 19,
+            "colunas_nomes": [
+                "CODLANC",
+                "EMPRESA",
+                "FILIAL",
+                "LDATA",
+                "CONTA",
+                "COD_VERSAO",
+                "CCUSTO",
+                "CNT_AUX",
+                "ITEM_CNTAUX",
+                "VALOR_DEB",
+                "VALOR_CRE",
+                "VALOR_LIQ",
+                "DSC_COMPLEMENTO",
+                "DOCNO",
+                "CODORIGEM",
+                "CODHIST",
+                "COD_SECUNDARIO",
+                "CTIPO",
+                "CLASSE_CONTA"
+            ]
+        },
+        "DimConta": {
+            "linhas": 1321,
+            "colunas": 10,
+            "colunas_nomes": [
+                "EMPRESA",
+                "COD_VERSAO",
+                "CONTA",
+                "REDUZIDO",
+                "DESCRICAO",
+                "NATUREZA",
+                "TIPO",
+                "CLASSE_CONTA",
+                "IND_ATIVA",
+                "USA_CONTA_AUX"
+            ]
+        },
+        "DimCentroCusto": {
+            "linhas": 16,
+            "colunas": 8,
+            "colunas_nomes": [
+                "CCUSTO",
+                "DESCRICAO_CCUSTO",
+                "HIERARQUIA",
+                "TIPOCC",
+                "IND_ATIVO",
+                "NIVEL_1",
+                "NIVEL_2",
+                "NIVEL_3"
+            ]
+        },
+        "DimItemContaAux": {
+            "linhas": 3221,
+            "colunas": 6,
+            "colunas_nomes": [
+                "EMPRESA",
+                "CNT_AUX",
+                "ITEM_CNTAUX",
+                "DESCRICAO",
+                "IND_INATIVA",
+                "SK_ITEM_CNTAUX"
+            ]
+        },
+        "DimContaAux": {
+            "linhas": 21,
+            "colunas": 5,
+            "colunas_nomes": [
+                "EMPRESA",
+                "CONTA",
+                "CNT_AUX",
+                "COD_VERSAO",
+                "SK_CONTA_AUX"
+            ]
+        },
+        "ParamBP_DRE": {
+            "linhas": 82,
+            "colunas": 11,
+            "colunas_nomes": [
+                "conta_sintetica",
+                "descricao_conta",
+                "relatorio",
+                "bloco",
+                "grupo",
+                "ordem_bloco",
+                "ordem_grupo",
+                "natureza",
+                "sinal",
+                "ativa",
+                "observacao"
+            ]
+        },
+        "Dim_CUSTO_PRODUCAO_MAPA": {
+            "linhas": 40,
+            "colunas": 8,
+            "colunas_nomes": [
+                "CONTA",
+                "DESCRICAO_CONTA",
+                "GRUPO_N1",
+                "ORDEM_N1",
+                "ORDEM_CONTA",
+                "IND_CUSTO_PRODUCAO",
+                "TIPO_CUSTO",
+                "OBSERVACAO"
+            ]
+        }
+    },
+    "menor_data_lancamento": "2025-01-01",
+    "maior_data_lancamento": "2027-12-01",
+    "mensagem": "Carga XLSX concluída com sucesso."
+}

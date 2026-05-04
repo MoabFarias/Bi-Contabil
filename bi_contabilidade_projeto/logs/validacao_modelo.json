@@ -1,0 +1,114 @@
+{
+    "gerado_em": "2026-05-04 15:39:07",
+    "resumo_linhas": {
+        "FatoLancamentoContabil": 112825,
+        "DimConta": 1321,
+        "DimCentroCusto": 16,
+        "DimItemContaAux": 3221,
+        "DimContaAux": 21,
+        "ParamBP_DRE": 84,
+        "Dim_CUSTO_PRODUCAO_MAPA": 40
+    },
+    "validacao_valores": {
+        "total_debitos": 7348312928.42,
+        "total_creditos": 7348312928.419999,
+        "total_valor_liquido": 0.0,
+        "qtd_divergencias_valor_liq": 0
+    },
+    "validacao_estrutura": {
+        "codlanc_vazio": 0,
+        "conta_vazia": 0,
+        "datas_invalidas": 0,
+        "docno_vazio": 6,
+        "cod_secundario_desconsiderado": true
+    },
+    "relacionamentos": {
+        "contas_fato_fora_dimconta": {
+            "qtd": 0,
+            "amostra": []
+        },
+        "contas_que_exigem_aux_sem_cnt_aux": {
+            "qtd_linhas": 0,
+            "amostra_codlanc": []
+        },
+        "contas_que_exigem_aux_sem_item_aux": {
+            "qtd_linhas": 0,
+            "amostra_codlanc": []
+        },
+        "sk_conta_aux_fora_dimcontaaux": {
+            "qtd": 0,
+            "amostra": []
+        },
+        "sk_item_aux_fora_dimitemcontaaux": {
+            "qtd": 0,
+            "amostra": []
+        },
+        "ccusto_3_4_fora_dimcentrocusto": {
+            "qtd": 0,
+            "amostra": []
+        },
+        "ccusto_vazio_em_contas_3_4": {
+            "qtd_linhas": 16120,
+            "amostra_codlanc": [
+                "1190065",
+                "1189895",
+                "1189939",
+                "1190057",
+                "1190114",
+                "1190145",
+                "1190160",
+                "1190170",
+                "1190196",
+                "1190203",
+                "1190213",
+                "1190215",
+                "1066441",
+                "1066479",
+                "1066490",
+                "1066523",
+                "1066589",
+                "1066623",
+                "1066651",
+                "1066673",
+                "1066686",
+                "1066694",
+                "1066850",
+                "1066867",
+                "1066885",
+                "1066893",
+                "1066903",
+                "1066914",
+                "1066937",
+                "1066945",
+                "1066966",
+                "1066984",
+                "1067074",
+                "1067126",
+                "1067290",
+                "1067308",
+                "1067318",
+                "1067328",
+                "1067347",
+                "1067371",
+                "1067416",
+                "1067398",
+                "1067406",
+                "1067483",
+                "1067491",
+                "1067499",
+                "1067507",
+                "1067577",
+                "1067585",
+                "1067593"
+            ]
+        },
+        "contas_1_2_3_sem_param_bp_dre_por_prefixo": {
+            "qtd": 0,
+            "amostra": []
+        },
+        "contas_4_com_movimento_sem_mapa_custo": {
+            "qtd": 0,
+            "amostra": []
+        }
+    }
+}

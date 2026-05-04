@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Envases FP&A Cinematic Prototypes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --env-red:#911427;
+      --env-white:#FFFFFF;
+      --env-black:#000000;
+      --env-gray:#979797;
+      --env-blue:#C2D2E4;
+      --env-green:#195945;
+      --env-beige:#C7BFB1;
+      --bg:#0d0c0d;
+      --surface:#151316;
+      --surface-2:#1d1b1f;
+      --surface-3:#262228;
+      --text:#f4f1ed;
+      --muted:#bdb5ab;
+      --border:rgba(255,255,255,.10);
+      --shadow:0 20px 60px rgba(0,0,0,.35);
+      --radius:20px;
+      --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;--space-6:24px;--space-8:32px;--space-10:40px;--space-12:48px;
+      --font-display:'Plus Jakarta Sans', Arial, sans-serif;
+      --font-body:'IBM Plex Sans', Arial, sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-body);background:radial-gradient(circle at top right, rgba(145,20,39,.16), transparent 30%),linear-gradient(180deg,#090909 0%, #111013 100%);color:var(--text);min-height:100vh}
+    a{color:inherit;text-decoration:none}
+    .shell{max-width:1500px;margin:0 auto;padding:32px 24px 96px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:32px;padding:18px 20px;border:1px solid var(--border);border-radius:18px;background:rgba(255,255,255,.03);backdrop-filter:blur(14px);position:sticky;top:12px;z-index:5}
+    .brand{display:flex;gap:14px;align-items:center}
+    .brand-mark{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--env-red),#57111d);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 12px 30px rgba(145,20,39,.35);position:relative}
+    .brand-mark:before,.brand-mark:after{content:"";position:absolute;background:rgba(255,255,255,.88);border-radius:999px}
+    .brand-mark:before{width:22px;height:4px;left:10px;top:13px}
+    .brand-mark:after{width:14px;height:4px;left:10px;top:24px}
+    .brand h1{font:800 20px var(--font-display);letter-spacing:.02em}
+    .brand p,.nav a,.meta{color:var(--muted);font-size:14px}
+    .nav{display:flex;gap:10px;flex-wrap:wrap}
+    .nav a{padding:10px 14px;border:1px solid var(--border);border-radius:999px;background:rgba(255,255,255,.03)}
+    .hero{display:grid;grid-template-columns:1.4fr .8fr;gap:24px;align-items:stretch;margin-bottom:28px}
+    .hero-card,.panel{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.025));border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow)}
+    .hero-card{padding:36px;position:relative;overflow:hidden}
+    .hero-card:after{content:"";position:absolute;inset:auto -10% -30% 30%;height:260px;background:radial-gradient(circle, rgba(145,20,39,.28), transparent 60%);pointer-events:none}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(199,191,177,.08);border:1px solid rgba(199,191,177,.16);color:var(--env-beige);font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
+    .hero h2{font:800 clamp(36px,5vw,72px)/1.02 var(--font-display);max-width:10ch;margin-bottom:14px}
+    .hero p{max-width:62ch;color:var(--muted);font-size:16px;line-height:1.65}
+    .hero-side{padding:26px;display:grid;gap:16px}
+    .legend{display:grid;gap:10px}
+    .legend div{display:flex;justify-content:space-between;gap:12px;font-size:14px;color:var(--muted)}
+    .dot{width:10px;height:10px;border-radius:999px;display:inline-block;margin-right:8px}
+    .red{background:var(--env-red)} .green{background:var(--env-green)} .blue{background:var(--env-blue)} .beige{background:var(--env-beige)}
+    .section{margin-top:32px}
+    .section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:16px}
+    .section-head h3{font:800 26px var(--font-display)}
+    .section-head p{color:var(--muted);max-width:70ch}
+    .dashboard{padding:22px}
+    .dashboard-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid var(--border);border-radius:22px;padding:18px;min-height:120px;position:relative;overflow:hidden}
+    .span-3{grid-column:span 3}.span-4{grid-column:span 4}.span-5{grid-column:span 5}.span-6{grid-column:span 6}.span-7{grid-column:span 7}.span-8{grid-column:span 8}.span-12{grid-column:1/-1}
+    .label{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+    .kpi{display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(180deg,rgba(145,20,39,.16),rgba(255,255,255,.02))}
+    .kpi .value{font:800 clamp(28px,3vw,44px) var(--font-display)}
+    .delta{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;font-size:13px;width:max-content}
+    .delta.positive{background:rgba(25,89,69,.18);color:#9ed4c1}
+    .delta.negative{background:rgba(145,20,39,.18);color:#f0a8b3}
+    .muted{color:var(--muted)}
+    .chart{display:flex;align-items:end;gap:10px;height:210px;padding-top:20px}
+    .bar{flex:1;border-radius:12px 12px 4px 4px;background:linear-gradient(180deg, rgba(194,210,228,.95), rgba(145,20,39,.72));box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+    .line-chart{height:220px;position:relative;background:linear-gradient(180deg,rgba(255,255,255,.03),transparent);border-radius:18px}
+    .line-chart svg{width:100%;height:100%}
+    .waterfall{display:flex;align-items:flex-end;gap:12px;height:220px}
+    .wf{width:56px;border-radius:10px 10px 0 0;position:relative}
+    .wf span{position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);font-size:12px;color:var(--muted);white-space:nowrap}
+    .table{width:100%;border-collapse:collapse;font-size:14px}
+    .table th,.table td{padding:12px 10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}
+    .table th{color:var(--muted);font-weight:600}
+    .table tr:hover td{background:rgba(255,255,255,.02)}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;font-size:12px;background:rgba(194,210,228,.12);color:var(--env-blue)}
+    .balance-wrap{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .stack{display:grid;gap:12px}
+    .account{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
+    .glow{box-shadow:0 0 0 1px rgba(145,20,39,.18),0 0 32px rgba(145,20,39,.14)}
+    .footer-note{margin-top:28px;color:var(--muted);font-size:13px;line-height:1.6}
+    @media (max-width: 1100px){
+      .hero{grid-template-columns:1fr}
+      .span-3,.span-4,.span-5,.span-6,.span-7,.span-8{grid-column:1/-1}
+      .balance-wrap{grid-template-columns:1fr}
+    }
+    @media (max-width: 720px){
+      .shell{padding:16px 14px 60px}
+      .topbar{position:static;flex-direction:column;align-items:flex-start}
+      .nav{width:100%}
+      .nav a{flex:1;text-align:center}
+      .hero-card,.hero-side,.dashboard{padding:18px}
+      .section-head{flex-direction:column;align-items:flex-start}
+      .chart,.waterfall,.line-chart{height:180px}
+      .wf{width:42px}
+      .table{font-size:13px;display:block;overflow:auto}
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div>
+          <h1>Envases FP&amp;A Cinematic Lab</h1>
+          <p>Wireframes HTML para balancete, DRE e balanço patrimonial</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="#balancete">Balancete</a>
+        <a href="#dre">DRE</a>
+        <a href="#balanco">Balanço</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="hero-card panel">
+        <div class="eyebrow">Tema cinematográfico + linguagem executiva</div>
+        <h2>Visualização financeira com atmosfera de filme e leitura de diretoria.</h2>
+        <p>Os protótipos abaixo usam a paleta institucional da Envases, tipografia com Plus Jakarta Sans e IBM Plex Sans, grid visual de 12 colunas e uma estética noir-industrial para testar experiências de FP&amp;A com maior impacto visual sem perder legibilidade.</p>
+      </div>
+      <aside class="hero-side panel">
+        <div>
+          <div class="label">Tokens principais</div>
+          <div class="legend">
+            <div><span><span class="dot red"></span>Vermelho Envases</span><span>#911427</span></div>
+            <div><span><span class="dot green"></span>Positivo</span><span>#195945</span></div>
+            <div><span><span class="dot blue"></span>Apoio técnico</span><span>#C2D2E4</span></div>
+            <div><span><span class="dot beige"></span>Bege técnico</span><span>#C7BFB1</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="label">Objetivo dos testes</div>
+          <p class="muted">Validar narrativa visual, hierarquia de KPIs, leitura de evolução e comparativos financeiros para uso em Python + HTML, Streamlit, Panel ou front customizado.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section" id="balancete">
+      <div class="section-head">
+        <div>
+          <h3>Protótipo 1 · Balancete de contas</h3>
+          <p>Modelo orientado a investigação contábil, com foco em saldos, desvios, evolução mensal e detalhamento por conta.</p>
+        </div>
+        <span class="badge">Cinematic Noir</span>
+      </div>
+      <div class="dashboard hero-card dashboard">
+        <div class="dashboard-grid">
+          <div class="card kpi span-3 glow"><div class="label">Saldo total</div><div class="value">R$ 248,7 mi</div><div class="delta negative">+6,4% vs mês anterior</div></div>
+          <div class="card kpi span-3"><div class="label">Contas críticas</div><div class="value">18</div><div class="delta negative">7 acima da faixa</div></div>
+          <div class="card kpi span-3"><div class="label">Frete</div><div class="value">R$ 12,4 mi</div><div class="delta negative">+9,1% vs orçamento</div></div>
+          <div class="card kpi span-3"><div class="label">Matéria-prima</div><div class="value">R$ 93,8 mi</div><div class="delta positive">-2,3% vs forecast</div></div>
+
+          <div class="card span-7">
+            <div class="label">Evolução dos grupos contábeis</div>
+            <div class="line-chart">
+              <svg viewBox="0 0 600 220" preserveAspectRatio="none" aria-label="Gráfico de linha fictício">
+                <defs>
+                  <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#911427" stop-opacity="0.9"/>
+                    <stop offset="100%" stop-color="#911427" stop-opacity="0.05"/>
+                  </linearGradient>
+                </defs>
+                <path d="M0,180 C70,150 110,80 160,96 C220,116 250,70 310,86 C365,100 420,40 470,60 C520,80 560,70 600,48" fill="none" stroke="#C2D2E4" stroke-width="4"/>
+                <path d="M0,200 C60,190 120,170 170,150 C230,130 300,135 360,122 C430,106 500,84 600,92 L600,220 L0,220 Z" fill="url(#g1)"/>
+                <path d="M0,200 C60,190 120,170 170,150 C230,130 300,135 360,122 C430,106 500,84 600,92" fill="none" stroke="#911427" stroke-width="4"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="card span-5">
+            <div class="label">Maiores variações</div>
+            <div class="chart">
+              <div class="bar" style="height:62%"></div>
+              <div class="bar" style="height:88%"></div>
+              <div class="bar" style="height:54%"></div>
+              <div class="bar" style="height:72%"></div>
+              <div class="bar" style="height:42%"></div>
+              <div class="bar" style="height:80%"></div>
+            </div>
+          </div>
+
+          <div class="card span-12">
+            <div class="label">Detalhamento por conta</div>
+            <table class="table">
+              <thead><tr><th>Conta</th><th>Grupo</th><th>Saldo atual</th><th>Orçado</th><th>Var. %</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>3.1.01 Matéria-prima</td><td>Custos</td><td>R$ 48,2 mi</td><td>R$ 46,9 mi</td><td>+2,8%</td><td><span class="delta negative">Pressão</span></td></tr>
+                <tr><td>3.1.07 Frete industrial</td><td>Logística</td><td>R$ 12,4 mi</td><td>R$ 11,3 mi</td><td>+9,1%</td><td><span class="delta negative">Crítico</span></td></tr>
+                <tr><td>1.1.03 Estoques</td><td>Ativo</td><td>R$ 39,8 mi</td><td>R$ 40,6 mi</td><td>-2,0%</td><td><span class="delta positive">Controlado</span></td></tr>
+                <tr><td>2.1.01 Fornecedores</td><td>Passivo</td><td>R$ 21,7 mi</td><td>R$ 20,8 mi</td><td>+4,3%</td><td><span class="delta negative">Atenção</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="dre">
+      <div class="section-head">
+        <div>
+          <h3>Protótipo 2 · DRE executiva</h3>
+          <p>Modelo narrativo para diretoria, destacando construção de resultado, margens e comparação contra orçamento e forecast.</p>
+        </div>
+        <span class="badge">Boardroom Film</span>
+      </div>
+      <div class="dashboard hero-card dashboard">
+        <div class="dashboard-grid">
+          <div class="card kpi span-3 glow"><div class="label">Receita líquida</div><div class="value">R$ 421,5 mi</div><div class="delta positive">+4,2% vs orçamento</div></div>
+          <div class="card kpi span-3"><div class="label">EBITDA</div><div class="value">R$ 61,2 mi</div><div class="delta positive">Margem 14,5%</div></div>
+          <div class="card kpi span-3"><div class="label">Despesas operacionais</div><div class="value">R$ 38,4 mi</div><div class="delta negative">+3,7% vs plano</div></div>
+          <div class="card kpi span-3"><div class="label">Lucro líquido</div><div class="value">R$ 24,8 mi</div><div class="delta positive">+1,9 p.p. vs LY</div></div>
+
+          <div class="card span-5">
+            <div class="label">Ponte do resultado</div>
+            <div class="waterfall">
+              <div class="wf" style="height:80%; background:#C2D2E4"><span>Receita</span></div>
+              <div class="wf" style="height:48%; background:#911427"><span>Custos</span></div>
+              <div class="wf" style="height:32%; background:#C7BFB1"><span>Despesas</span></div>
+              <div class="wf" style="height:22%; background:#195945"><span>EBITDA</span></div>
+              <div class="wf" style="height:16%; background:#979797"><span>Financeiro</span></div>
+              <div class="wf" style="height:12%; background:#195945"><span>Lucro</span></div>
+            </div>
+          </div>
+
+          <div class="card span-7">
+            <div class="label">Evolução mensal de receita, custos e lucro</div>
+            <div class="line-chart">
+              <svg viewBox="0 0 600 220" preserveAspectRatio="none" aria-label="Gráfico de linhas fictício DRE">
+                <path d="M0,90 C70,82 120,74 180,70 C240,66 320,54 410,64 C500,74 560,58 600,46" fill="none" stroke="#C2D2E4" stroke-width="4"/>
+                <path d="M0,130 C80,126 140,114 200,122 C260,130 330,110 410,118 C500,126 560,122 600,110" fill="none" stroke="#C7BFB1" stroke-width="4"/>
+                <path d="M0,176 C80,172 130,165 190,160 C250,154 320,136 400,140 C490,146 540,132 600,124" fill="none" stroke="#911427" stroke-width="4"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="card span-12">
+            <div class="label">Resumo DRE</div>
+            <table class="table">
+              <thead><tr><th>Linha DRE</th><th>Real</th><th>Orçado</th><th>Forecast</th><th>Var. Abs.</th><th>Var. %</th></tr></thead>
+              <tbody>
+                <tr><td>Receita líquida</td><td>R$ 421,5 mi</td><td>R$ 404,4 mi</td><td>R$ 417,0 mi</td><td>R$ 17,1 mi</td><td>+4,2%</td></tr>
+                <tr><td>Custo dos produtos vendidos</td><td>R$ 297,8 mi</td><td>R$ 289,9 mi</td><td>R$ 295,6 mi</td><td>R$ 7,9 mi</td><td>+2,7%</td></tr>
+                <tr><td>EBITDA</td><td>R$ 61,2 mi</td><td>R$ 54,8 mi</td><td>R$ 59,3 mi</td><td>R$ 6,4 mi</td><td>+11,6%</td></tr>
+                <tr><td>Lucro líquido</td><td>R$ 24,8 mi</td><td>R$ 21,7 mi</td><td>R$ 23,9 mi</td><td>R$ 3,1 mi</td><td>+14,3%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="balanco">
+      <div class="section-head">
+        <div>
+          <h3>Protótipo 3 · Balanço patrimonial</h3>
+          <p>Modelo espelhado para posição financeira, estrutura de capital, liquidez e equilíbrio entre ativo, passivo e patrimônio.</p>
+        </div>
+        <span class="badge">Industrial Premium</span>
+      </div>
+      <div class="dashboard hero-card dashboard">
+        <div class="dashboard-grid">
+          <div class="card kpi span-3 glow"><div class="label">Ativo total</div><div class="value">R$ 1,24 bi</div><div class="delta positive">+5,8% vs LY</div></div>
+          <div class="card kpi span-3"><div class="label">Passivo total</div><div class="value">R$ 812 mi</div><div class="delta negative">+6,9% vs LY</div></div>
+          <div class="card kpi span-3"><div class="label">Patrimônio líquido</div><div class="value">R$ 428 mi</div><div class="delta positive">+3,9% vs LY</div></div>
+          <div class="card kpi span-3"><div class="label">Capital de giro</div><div class="value">R$ 97 mi</div><div class="delta positive">Saudável</div></div>
+
+          <div class="card span-12">
+            <div class="label">Estrutura espelhada</div>
+            <div class="balance-wrap">
+              <div class="stack">
+                <div class="account glow"><strong>Ativo circulante</strong><span>R$ 322 mi</span></div>
+                <div class="account"><span>Caixa e equivalentes</span><span>R$ 84 mi</span></div>
+                <div class="account"><span>Contas a receber</span><span>R$ 118 mi</span></div>
+                <div class="account"><span>Estoques</span><span>R$ 95 mi</span></div>
+                <div class="account"><span>Outros ativos circulantes</span><span>R$ 25 mi</span></div>
+                <div class="account glow"><strong>Ativo não circulante</strong><span>R$ 918 mi</span></div>
+              </div>
+              <div class="stack">
+                <div class="account glow"><strong>Passivo circulante</strong><span>R$ 225 mi</span></div>
+                <div class="account"><span>Fornecedores</span><span>R$ 96 mi</span></div>
+                <div class="account"><span>Empréstimos CP</span><span>R$ 74 mi</span></div>
+                <div class="account"><span>Obrigações operacionais</span><span>R$ 55 mi</span></div>
+                <div class="account glow"><strong>Passivo não circulante</strong><span>R$ 587 mi</span></div>
+                <div class="account glow"><strong>Patrimônio líquido</strong><span>R$ 428 mi</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card span-6">
+            <div class="label">Liquidez e alavancagem</div>
+            <div class="chart">
+              <div class="bar" style="height:46%"></div>
+              <div class="bar" style="height:68%"></div>
+              <div class="bar" style="height:58%"></div>
+              <div class="bar" style="height:74%"></div>
+              <div class="bar" style="height:52%"></div>
+            </div>
+          </div>
+
+          <div class="card span-6">
+            <div class="label">Evolução patrimonial</div>
+            <div class="line-chart">
+              <svg viewBox="0 0 600 220" preserveAspectRatio="none" aria-label="Gráfico de linhas fictício balanço">
+                <path d="M0,162 C70,150 130,140 190,126 C250,112 320,90 390,82 C470,72 540,58 600,54" fill="none" stroke="#C2D2E4" stroke-width="4"/>
+                <path d="M0,188 C70,178 130,170 190,164 C260,158 330,142 400,136 C470,130 540,118 600,106" fill="none" stroke="#911427" stroke-width="4"/>
+                <path d="M0,202 C70,196 130,188 190,180 C260,172 330,162 400,152 C470,144 540,128 600,118" fill="none" stroke="#195945" stroke-width="4"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer-note">Protótipos conceituais para validação de narrativa, layout e linguagem visual. Os números são fictícios e servem apenas para demonstrar estrutura, composição e direção estética para futuros dashboards em Python + HTML.</p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,566 @@
+Pasta analisada: C:\Users\mfarias\OneDrive - CRISTALPET\POWER BI\Projetos\Contabilidade\Dataset
+Arquivos encontrados: 2
+- balancete 12-2024.txt
+- Data set - contabilidade-gerencial-html.xlsx
+
+####################################################################################################
+ARQUIVO EXCEL: Data set - contabilidade-gerencial-html.xlsx
+####################################################################################################
+
+Abas encontradas:
+- FatoLancamentoContabil
+- DimConta
+- DimCentroCusto
+- DimItemContaAux
+- DimContaAux
+- ParamBP_DRE
+- Dim_CUSTO_PRODUCAO_MAPA
+
+================================================================================
+DATASET: Data set - contabilidade-gerencial-html.xlsx | FatoLancamentoContabil
+================================================================================
+
+Linhas: 112,825
+Colunas: 19
+
+Colunas:
+- CODLANC
+- EMPRESA
+- FILIAL
+- LDATA
+- CONTA
+- COD_VERSAO
+- CCUSTO
+- CNT_AUX
+- ITEM_CNTAUX
+- VALOR_DEB
+- VALOR_CRE
+- VALOR_LIQ
+- DSC_COMPLEMENTO
+- DOCNO
+- CODORIGEM
+- CODHIST
+- COD_SECUNDARIO
+- CTIPO
+- CLASSE_CONTA
+
+Tipos de dados:
+CODLANC                     int64
+EMPRESA                     int64
+FILIAL                      int64
+LDATA              datetime64[us]
+CONTA                         str
+COD_VERSAO                  int64
+CCUSTO                        str
+CNT_AUX                   float64
+ITEM_CNTAUX               float64
+VALOR_DEB                 float64
+VALOR_CRE                 float64
+VALOR_LIQ                 float64
+DSC_COMPLEMENTO               str
+DOCNO                         str
+CODORIGEM                   int64
+CODHIST                       str
+COD_SECUNDARIO            float64
+CTIPO                         str
+CLASSE_CONTA                int64
+dtype: object
+
+Nulos por coluna:
+CODLANC                 0
+EMPRESA                 0
+FILIAL                  0
+LDATA                   0
+CONTA                   0
+COD_VERSAO              0
+CCUSTO                  0
+CNT_AUX             86495
+ITEM_CNTAUX         86495
+VALOR_DEB           49077
+VALOR_CRE           63748
+VALOR_LIQ               0
+DSC_COMPLEMENTO         0
+DOCNO                   6
+CODORIGEM               0
+CODHIST                 0
+COD_SECUNDARIO     112825
+CTIPO                   0
+CLASSE_CONTA            0
+dtype: int64
+
+Valores distintos por coluna:
+CODLANC            112825
+EMPRESA                 1
+FILIAL                  1
+LDATA                 453
+CONTA                 346
+COD_VERSAO              1
+CCUSTO                  4
+CNT_AUX                 4
+ITEM_CNTAUX           701
+VALOR_DEB           24377
+VALOR_CRE           16090
+VALOR_LIQ           40467
+DSC_COMPLEMENTO     80053
+DOCNO               24701
+CODORIGEM              22
+CODHIST                 5
+COD_SECUNDARIO          0
+CTIPO                   2
+CLASSE_CONTA            5
+dtype: int64
+
+Amostra:
+   CODLANC  EMPRESA  FILIAL  ... COD_SECUNDARIO CTIPO  CLASSE_CONTA
+0  1096085        1       1  ...            NaN     C             1
+1  1071622        1       1  ...            NaN     C             1
+2  1073316        1       1  ...            NaN     C             1
+3  1073891        1       1  ...            NaN     C             1
+4  1074680        1       1  ...            NaN     C             1
+5  1074752        1       1  ...            NaN     C             1
+6  1076138        1       1  ...            NaN     C             1
+7  1076511        1       1  ...            NaN     C             1
+8  1077027        1       1  ...            NaN     C             1
+9  1081343        1       1  ...            NaN     C             1
+
+[10 rows x 19 columns]
+
+================================================================================
+VALIDAÇÃO ESPECÍFICA: FatoLancamentoContabil
+================================================================================
+
+Colunas esperadas:
+- CODLANC: OK
+- LDATA: OK
+- CONTA: OK
+- CCUS: FALTANDO
+- CNT_AUX: OK
+- ITEM_CNTAUX: OK
+- VALOR_DEB: OK
+- VALOR_CRE: OK
+- VALOR_LIQ: OK
+- DSC_COMPLEMENTO: OK
+
+Total débitos: 7,348,312,928.42
+Total créditos: 7,348,312,928.42
+Total valor líquido: 0.00
+Divergências em VALOR_LIQ = DEB - CRE: 0
+
+Top 15 contas por quantidade de lançamentos:
+CONTA
+1.1.01.02.0001    15206
+2.1.01.01.0001     9549
+1.1.15.01.0001     7747
+1.1.20.02.0010     5260
+1.1.20.02.0001     5259
+2.1.01.01.0004     4019
+1.1.20.02.0013     3765
+4.1.02.01.0004     3735
+2.1.05.03.0001     3414
+2.1.05.03.0002     3414
+2.1.05.03.0005     3376
+3.1.02.03.0001     3370
+3.1.02.03.0004     3367
+3.1.02.03.0005     3367
+3.1.01.01.0002     3290
+Name: count, dtype: int64
+
+Preenchimento de CNT_AUX:
+CNT_AUX
+True     86495
+False    26330
+Name: count, dtype: int64
+
+Preenchimento de ITEM_CNTAUX:
+ITEM_CNTAUX
+True     86495
+False    26330
+Name: count, dtype: int64
+
+================================================================================
+DATASET: Data set - contabilidade-gerencial-html.xlsx | DimConta
+================================================================================
+
+Linhas: 1,321
+Colunas: 10
+
+Colunas:
+- EMPRESA
+- COD_VERSAO
+- CONTA
+- REDUZIDO
+- DESCRICAO
+- NATUREZA
+- TIPO
+- CLASSE_CONTA
+- IND_ATIVA
+- USA_CONTA_AUX
+
+Tipos de dados:
+EMPRESA          int64
+COD_VERSAO       int64
+CONTA              str
+REDUZIDO         int64
+DESCRICAO          str
+NATUREZA           str
+TIPO               str
+CLASSE_CONTA     int64
+IND_ATIVA          str
+USA_CONTA_AUX      str
+dtype: object
+
+Nulos por coluna:
+EMPRESA          0
+COD_VERSAO       0
+CONTA            0
+REDUZIDO         0
+DESCRICAO        0
+NATUREZA         0
+TIPO             0
+CLASSE_CONTA     0
+IND_ATIVA        0
+USA_CONTA_AUX    0
+dtype: int64
+
+Valores distintos por coluna:
+EMPRESA             1
+COD_VERSAO          1
+CONTA            1321
+REDUZIDO         1321
+DESCRICAO        1119
+NATUREZA            2
+TIPO                2
+CLASSE_CONTA        5
+IND_ATIVA           2
+USA_CONTA_AUX       2
+dtype: int64
+
+Amostra:
+   EMPRESA  COD_VERSAO           CONTA  ...  CLASSE_CONTA IND_ATIVA USA_CONTA_AUX
+0        1        2014               1  ...             1         S             N
+1        1        2014             1.1  ...             1         S             N
+2        1        2014          1.1.01  ...             1         S             N
+3        1        2014       1.1.01.01  ...             1         S             N
+4        1        2014  1.1.01.01.0001  ...             1         S             N
+5        1        2014  1.1.01.01.0002  ...             1         N             N
+6        1        2014  1.1.01.01.0003  ...             1         N             S
+7        1        2014       1.1.01.02  ...             1         S             N
+8        1        2014  1.1.01.02.0001  ...             1         S             N
+9        1        2014  1.1.01.02.0002  ...             1         N             N
+
+[10 rows x 10 columns]
+
+================================================================================
+DATASET: Data set - contabilidade-gerencial-html.xlsx | DimCentroCusto
+================================================================================
+
+Linhas: 16
+Colunas: 8
+
+Colunas:
+- CCUSTO
+- DESCRICAO_CCUSTO
+- HIERARQUIA
+- TIPOCC
+- IND_ATIVO
+- NIVEL_1
+- NIVEL_2
+- NIVEL_3
+
+Tipos de dados:
+CCUSTO              str
+DESCRICAO_CCUSTO    str
+HIERARQUIA          str
+TIPOCC              str
+IND_ATIVO           str
+NIVEL_1             str
+NIVEL_2             str
+NIVEL_3             str
+dtype: object
+
+Nulos por coluna:
+CCUSTO              0
+DESCRICAO_CCUSTO    1
+HIERARQUIA          1
+TIPOCC              0
+IND_ATIVO           0
+NIVEL_1             0
+NIVEL_2             0
+NIVEL_3             0
+dtype: int64
+
+Valores distintos por coluna:
+CCUSTO              16
+DESCRICAO_CCUSTO    14
+HIERARQUIA          15
+TIPOCC               2
+IND_ATIVO            1
+NIVEL_1              2
+NIVEL_2              5
+NIVEL_3              8
+dtype: int64
+
+Amostra:
+     CCUSTO      DESCRICAO_CCUSTO HIERARQUIA  ... NIVEL_1 NIVEL_2  NIVEL_3
+0         1            CRISTALPET          1  ...       1       1        1
+1      1.01         ADMINISTRACAO       1.01  ...       1    1.01     1.01
+2  1.01.001        ADMINISTRATIVO   1.01.001  ...       1    1.01  1.01.00
+3      1.02            INDUSTRIAL       1.02  ...       1    1.02     1.02
+4  1.02.001            INDUSTRIAL   1.02.001  ...       1    1.02  1.02.00
+5  1.02.002             EXPEDICAO   1.02.002  ...       1    1.02  1.02.00
+6  1.02.003             QUALIDADE   1.02.003  ...       1    1.02  1.02.00
+7      1.03                 SUAPE       1.03  ...       1    1.03     1.03
+8  1.03.001        OBRAS EM SUAPE   1.03.001  ...       1    1.03  1.03.00
+9  1.03.002  ALIMENTACAO EM SUAPE   1.03.002  ...       1    1.03  1.03.00
+
+[10 rows x 8 columns]
+
+================================================================================
+DATASET: Data set - contabilidade-gerencial-html.xlsx | DimItemContaAux
+================================================================================
+
+Linhas: 3,221
+Colunas: 6
+
+Colunas:
+- EMPRESA
+- CNT_AUX
+- ITEM_CNTAUX
+- DESCRICAO
+- IND_INATIVA
+- SK_ITEM_CNTAUX
+
+Tipos de dados:
+EMPRESA           int64
+CNT_AUX           int64
+ITEM_CNTAUX       int64
+DESCRICAO           str
+IND_INATIVA         str
+SK_ITEM_CNTAUX      str
+dtype: object
+
+Nulos por coluna:
+EMPRESA           0
+CNT_AUX           0
+ITEM_CNTAUX       0
+DESCRICAO         0
+IND_INATIVA       0
+SK_ITEM_CNTAUX    0
+dtype: int64
+
+Valores distintos por coluna:
+EMPRESA              1
+CNT_AUX              4
+ITEM_CNTAUX       2649
+DESCRICAO         2964
+IND_INATIVA          1
+SK_ITEM_CNTAUX    3221
+dtype: int64
+
+Amostra:
+   EMPRESA  CNT_AUX  ...  IND_INATIVA SK_ITEM_CNTAUX
+0        1        1  ...            N       01|01|44
+1        1        1  ...            N       01|01|45
+2        1        1  ...            N       01|01|46
+3        1        1  ...            N       01|01|47
+4        1        1  ...            N       01|01|48
+5        1        1  ...            N       01|01|49
+6        1        1  ...            N       01|01|50
+7        1        1  ...            N       01|01|51
+8        1        1  ...            N       01|01|52
+9        1        1  ...            N       01|01|53
+
+[10 rows x 6 columns]
+
+================================================================================
+DATASET: Data set - contabilidade-gerencial-html.xlsx | DimContaAux
+================================================================================
+
+Linhas: 21
+Colunas: 5
+
+Colunas:
+- EMPRESA
+- CONTA
+- CNT_AUX
+- COD_VERSAO
+- SK_CONTA_AUX
+
+Tipos de dados:
+EMPRESA         int64
+CONTA             str
+CNT_AUX         int64
+COD_VERSAO      int64
+SK_CONTA_AUX      str
+dtype: object
+
+Nulos por coluna:
+EMPRESA         0
+CONTA           0
+CNT_AUX         0
+COD_VERSAO      0
+SK_CONTA_AUX    0
+dtype: int64
+
+Valores distintos por coluna:
+EMPRESA          1
+CONTA           21
+CNT_AUX          4
+COD_VERSAO       1
+SK_CONTA_AUX    21
+dtype: int64
+
+Amostra:
+   EMPRESA           CONTA  CNT_AUX  COD_VERSAO               SK_CONTA_AUX
+0        1  1.1.01.01.0003        3        2014  01|1.1.01.01.0003|03|2014
+1        1  1.1.10.01.0001        2        2014  01|1.1.10.01.0001|02|2014
+2        1  1.1.10.01.0002        2        2014  01|1.1.10.01.0002|02|2014
+3        1  1.1.10.01.0003        2        2014  01|1.1.10.01.0003|02|2014
+4        1  1.1.10.01.0004        2        2014  01|1.1.10.01.0004|02|2014
+5        1  1.1.10.05.0001        3        2014  01|1.1.10.05.0001|03|2014
+6        1  1.1.10.06.0001        3        2014  01|1.1.10.06.0001|03|2014
+7        1  1.1.15.01.0001        1        2014  01|1.1.15.01.0001|01|2014
+8        1  1.2.01.01.0001        1        2014  01|1.2.01.01.0001|01|2014
+9        1  1.2.01.07.0003        2        2014  01|1.2.01.07.0003|02|2014
+
+================================================================================
+DATASET: Data set - contabilidade-gerencial-html.xlsx | ParamBP_DRE
+================================================================================
+
+Linhas: 82
+Colunas: 11
+
+Colunas:
+- conta_sintetica
+- descricao_conta
+- relatorio
+- bloco
+- grupo
+- ordem_bloco
+- ordem_grupo
+- natureza
+- sinal
+- ativa
+- observacao
+
+Tipos de dados:
+conta_sintetica      str
+descricao_conta      str
+relatorio            str
+bloco                str
+grupo                str
+ordem_bloco        int64
+ordem_grupo        int64
+natureza             str
+sinal                str
+ativa                str
+observacao           str
+dtype: object
+
+Nulos por coluna:
+conta_sintetica     0
+descricao_conta     0
+relatorio           0
+bloco               0
+grupo               0
+ordem_bloco         0
+ordem_grupo         0
+natureza            0
+sinal               0
+ativa               0
+observacao         72
+dtype: int64
+
+Valores distintos por coluna:
+conta_sintetica    82
+descricao_conta    78
+relatorio           2
+bloco              10
+grupo              32
+ordem_bloco         6
+ordem_grupo         8
+natureza            2
+sinal               2
+ativa               1
+observacao          5
+dtype: int64
+
+Amostra:
+  conta_sintetica                     descricao_conta  ... ativa observacao
+0       1.1.01.01                               CAIXA  ...     S        NaN
+1       1.1.01.02              BANCOS CONTA MOVIMENTO  ...     S        NaN
+2       1.1.01.03  BANCO APLICACOES LIQUIDEZ IMEDIATA  ...     S        NaN
+3       1.1.01.04           BANCOS CONTA INVESTIMENTO  ...     S        NaN
+4       1.1.02.01     ESTOQUE MERCADORIA PARA REVENDA  ...     S        NaN
+5       1.1.02.02             ESTOQUE DE INSUMOS E MP  ...     S        NaN
+6       1.1.02.03        ESTOQUE DE PRODUTOS ACABADOS  ...     S        NaN
+7       1.1.02.10                 ESTOQUE EM TRANSITO  ...     S        NaN
+8       1.1.03.01           MATERIAL DE USO E CONSUMO  ...     S        NaN
+9       1.1.03.02                    OUTROS MATERIAIS  ...     S        NaN
+
+[10 rows x 11 columns]
+
+================================================================================
+DATASET: Data set - contabilidade-gerencial-html.xlsx | Dim_CUSTO_PRODUCAO_MAPA
+================================================================================
+
+Linhas: 40
+Colunas: 8
+
+Colunas:
+- CONTA
+- DESCRICAO_CONTA
+- GRUPO_N1
+- ORDEM_N1
+- ORDEM_CONTA
+- IND_CUSTO_PRODUCAO
+- TIPO_CUSTO
+- OBSERVACAO
+
+Tipos de dados:
+CONTA                   str
+DESCRICAO_CONTA         str
+GRUPO_N1                str
+ORDEM_N1              int64
+ORDEM_CONTA           int64
+IND_CUSTO_PRODUCAO      str
+TIPO_CUSTO              str
+OBSERVACAO              str
+dtype: object
+
+Nulos por coluna:
+CONTA                  0
+DESCRICAO_CONTA        0
+GRUPO_N1               0
+ORDEM_N1               0
+ORDEM_CONTA            0
+IND_CUSTO_PRODUCAO     0
+TIPO_CUSTO             0
+OBSERVACAO            38
+dtype: int64
+
+Valores distintos por coluna:
+CONTA                 40
+DESCRICAO_CONTA       38
+GRUPO_N1               8
+ORDEM_N1               8
+ORDEM_CONTA           40
+IND_CUSTO_PRODUCAO     1
+TIPO_CUSTO             2
+OBSERVACAO             2
+dtype: int64
+
+Amostra:
+            CONTA              DESCRICAO_CONTA  ...    TIPO_CUSTO  OBSERVACAO
+0  4.1.01.01.0001         SALARIOS E ORDENADOS  ...  Custo direto         NaN
+1  4.1.01.01.0005                   13 SALARIO  ...  Custo direto         NaN
+2  4.1.01.01.0006                       FERIAS  ...  Custo direto         NaN
+3  4.1.01.01.0007                 HORAS EXTRAS  ...  Custo direto         NaN
+4  4.1.01.01.0009               PERICULOSIDADE  ...  Custo direto         NaN
+5  4.1.01.01.0010            ADICIONAL NOTURNO  ...  Custo direto         NaN
+6  4.1.01.01.0016                         INSS  ...  Custo direto         NaN
+7  4.1.01.01.0017                         FGTS  ...  Custo direto         NaN
+8  4.1.01.01.0018  INDENIZACOES E AVISO PREVIO  ...  Custo direto         NaN
+9  4.1.01.01.0019              VALE TRANSPORTE  ...  Custo direto         NaN
+
+[10 rows x 8 columns]
