@@ -3,5 +3,9 @@
   "arquivo_principal": "Data set - contabilidade-gerencial-html.xlsx",
   "usar_excel_xlsx": true,
   "atualizar_powerquery_antes_da_carga": false,
-  "salvar_log_carga": true
+  "salvar_log_carga": true,
+  "limite_visualizacao": {
+    "usar_limite_automatico": true,
+    "meses_futuros_permitidos": 2
+  }
 }
