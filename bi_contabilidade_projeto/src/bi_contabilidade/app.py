@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi import Request
 
-from bi_contabilidade.atualizacao import ler_ultimo_log_carga
+from src.bi_contabilidade.atualizacao import ler_ultimo_log_carga
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 LOGS_DIR = ROOT_DIR / "logs"
