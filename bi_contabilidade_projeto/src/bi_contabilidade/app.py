@@ -33,9 +33,20 @@ def ler_json(caminho: Path, padrao: dict) -> dict:
         return json.load(arquivo)
 
 
-def executar_script(nome_script: str) -> None:
+def executar_script(nome_script: str, *args: str) -> None:
     caminho_script = Path(__file__).resolve().parent / nome_script
-    subprocess.run([sys.executable, str(caminho_script)], check=True)
+    subprocess.run([sys.executable, "-m", f"src.bi_contabilidade.{caminho_script.stem}", *args], cwd=ROOT_DIR, check=True)
+
+
+def preparar_dre_chart(dre_comparativo: dict) -> dict:
+    linhas = dre_comparativo.get("linhas", [])
+    labels = [f"{linha.get('bloco', '')} · {linha.get('grupo', '')}" for linha in linhas]
+    return {
+        "labels": labels,
+        "base": [round(float(linha.get("valor_base", 0) or 0) / 1_000_000, 2) for linha in linhas],
+        "comparacao": [round(float(linha.get("valor_comparacao", 0) or 0) / 1_000_000, 2) for linha in linhas],
+        "variacao": [round(float(linha.get("variacao_valor", 0) or 0) / 1_000_000, 2) for linha in linhas],
+    }
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -57,6 +68,11 @@ def dashboard(request: Request):
         LOGS_DIR / "dre_detalhe.json",
         {"grupos": []},
     )
+    dre_comparativo = ler_json(
+        LOGS_DIR / "dre_comparativo.json",
+        {"status": "sem_comparativo", "linhas": [], "periodo_base": None, "periodo_comparacao": None},
+    )
+    dre_chart = preparar_dre_chart(dre_comparativo)
 
     return templates.TemplateResponse(
         request=request,
@@ -67,6 +83,8 @@ def dashboard(request: Request):
             "balancete": balancete,
             "dre_resumo": dre_resumo,
             "dre_detalhe": dre_detalhe,
+            "dre_comparativo": dre_comparativo,
+            "dre_chart": dre_chart,
         },
     )
 
@@ -95,6 +113,12 @@ def gerar_dre():
     return RedirectResponse(url="/", status_code=303)
 
 
+@app.post("/gerar-dre-comparativo")
+def gerar_dre_comparativo():
+    executar_script("motor_dre_comparativo.py", "--base", "2026-01", "--comparacao", "2025-01")
+    return RedirectResponse(url="/", status_code=303)
+
+
 @app.get("/download-balancete")
 def download_balancete():
     arquivo = OUTPUTS_DIR / "balancete_mensal.xlsx"
@@ -115,5 +139,17 @@ def download_dre():
     return FileResponse(
         path=arquivo,
         filename="dre_gerencial.xlsx",
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+
+
+@app.get("/download-dre-comparativo")
+def download_dre_comparativo():
+    arquivo = OUTPUTS_DIR / "dre_comparativo.xlsx"
+    if not arquivo.exists():
+        return HTMLResponse("DRE comparativa ainda nao foi gerada.", status_code=404)
+    return FileResponse(
+        path=arquivo,
+        filename="dre_comparativo.xlsx",
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
