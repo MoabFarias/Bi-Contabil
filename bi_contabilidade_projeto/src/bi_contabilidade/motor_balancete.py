@@ -111,6 +111,48 @@ def montar_fato_tratada(fato: pd.DataFrame) -> pd.DataFrame:
     return fato
 
 
+def obter_limite_visualizacao(config: dict) -> str | None:
+    limite_config = config.get("limite_visualizacao", {})
+
+    if not limite_config.get("usar_limite_automatico", False):
+        return None
+
+    meses_futuros = int(limite_config.get("meses_futuros_permitidos", 2))
+    hoje = pd.Timestamp.today().normalize()
+    limite = hoje + pd.DateOffset(months=meses_futuros)
+    return limite.strftime("%Y-%m")
+
+
+def aplicar_limite_visualizacao(fato: pd.DataFrame, config: dict) -> tuple[pd.DataFrame, dict]:
+    periodos_total = sorted(fato["PERIODO"].dropna().unique().tolist())
+    limite_periodo = obter_limite_visualizacao(config)
+
+    if limite_periodo is None:
+        fato_filtrada = fato.copy()
+        modo_limite = "SEM_LIMITE"
+    else:
+        fato_filtrada = fato[fato["PERIODO"] <= limite_periodo].copy()
+        modo_limite = "AUTOMATICO_MES_ATUAL_MAIS_FUTUROS"
+
+    periodos_visualizacao = sorted(fato_filtrada["PERIODO"].dropna().unique().tolist())
+
+    metadados = {
+        "modo_limite_visualizacao": modo_limite,
+        "limite_periodo_visualizacao": limite_periodo,
+        "periodo_total_carregado_inicio": periodos_total[0] if periodos_total else None,
+        "periodo_total_carregado_fim": periodos_total[-1] if periodos_total else None,
+        "periodo_visualizacao_inicio": periodos_visualizacao[0] if periodos_visualizacao else None,
+        "periodo_visualizacao_fim": periodos_visualizacao[-1] if periodos_visualizacao else None,
+        "periodos_total_carregados": periodos_total,
+        "periodos_visualizados": periodos_visualizacao,
+        "linhas_fato_total_carregadas": int(len(fato)),
+        "linhas_fato_visualizadas": int(len(fato_filtrada)),
+        "linhas_fato_ocultadas_por_periodo": int(len(fato) - len(fato_filtrada)),
+    }
+
+    return fato_filtrada, metadados
+
+
 def enriquecer_com_dim_conta(balancete: pd.DataFrame, dim_conta: pd.DataFrame) -> pd.DataFrame:
     dim = dim_conta.copy()
     dim["CONTA_N"] = serie_normalizada(dim["CONTA"])
@@ -168,9 +210,11 @@ def aplicar_param_bp_dre(balancete: pd.DataFrame, param: pd.DataFrame) -> pd.Dat
 
 
 def montar_balancete_mensal():
+    config = carregar_configuracao()
     abas = carregar_excel()
 
-    fato = montar_fato_tratada(abas["FatoLancamentoContabil"])
+    fato_total = montar_fato_tratada(abas["FatoLancamentoContabil"])
+    fato, metadados_periodo = aplicar_limite_visualizacao(fato_total, config)
     dim_conta = abas["DimConta"]
     param = abas["ParamBP_DRE"]
 
@@ -215,6 +259,7 @@ def montar_balancete_mensal():
 
     resumo = {
         "gerado_em": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        **metadados_periodo,
         "periodos": sorted(balancete["PERIODO"].dropna().unique().tolist()),
         "qtd_linhas_balancete": int(len(balancete)),
         "qtd_linhas_analitico": int(len(analitico)),
