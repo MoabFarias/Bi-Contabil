@@ -31,3 +31,17 @@ data/raw/         Arquivos originais exportados do ERP ou Excel
 data/processed/   Bases tratadas
 data/config/      De/para, mapas contabeis e parametros
 ```
+
+## Estrutura versionada nesta etapa
+
+```text
+bi_contabilidade_projeto/  Pipeline inicial para ingestão, validação e geração de HTML
+```
+
+Esse diretório contém a primeira versão do projeto para:
+
+- ler `balancete 12-2024.txt`
+- perfilar o arquivo `Data set - contabilidade-gerencial-html.xlsx`
+- mapear colunas automaticamente
+- validar coerência numérica contábil
+- gerar páginas HTML com diagnóstico das extrações e reconciliações
