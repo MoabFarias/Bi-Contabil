@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>BI Contábil - Dashboard</title>
+    <style>
+        body { font-family: Arial; background: #f4f6f8; margin: 0; padding: 20px; }
+        h1 { color: #333; }
+        .card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        button { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
+        .btn { background: #2d89ef; color: white; }
+        .btn:hover { background: #1b5fa7; }
+        .btn-download { background: #28a745; }
+    </style>
+</head>
+<body>
+
+<h1>Dashboard BI Contábil</h1>
+
+<div class="card">
+    <h2>Ações</h2>
+    <form method="post" action="/atualizar-dados"><button class="btn">Atualizar Dados</button></form>
+    <form method="post" action="/validar-modelo"><button class="btn">Validar Modelo</button></form>
+    <form method="post" action="/gerar-balancete"><button class="btn">Gerar Balancete</button></form>
+    <a href="/download-balancete"><button class="btn-download">Baixar Balancete</button></a>
+</div>
+
+<div class="grid">
+
+    <div class="card">
+        <h3>Carga</h3>
+        <p>Última carga: {{ carga.get('data_execucao', 'N/A') }}</p>
+        <p>Status: {{ carga.get('status', 'N/A') }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Validação</h3>
+        <p>Status: OK</p>
+    </div>
+
+    <div class="card">
+        <h3>Balancete</h3>
+        <p>Período exibido: {{ balancete.get('periodo_visualizacao_inicio') }} até {{ balancete.get('periodo_visualizacao_fim') }}</p>
+        <p>Débitos: {{ balancete.get('total_debitos') }}</p>
+        <p>Créditos: {{ balancete.get('total_creditos') }}</p>
+    </div>
+
+</div>
+
+</body>
+</html>
