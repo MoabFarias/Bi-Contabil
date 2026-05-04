@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+bi_contabilidade_projeto/logs/*.json
+bi_contabilidade_projeto/outputs/*.xlsx
+bi_contabilidade_projeto/outputs/*.csv
+bi_contabilidade_projeto/Dataset/
+*.xlsx
+*.xls
+*.csv
+.env
