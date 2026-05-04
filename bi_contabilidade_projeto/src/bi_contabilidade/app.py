@@ -2,13 +2,12 @@ from pathlib import Path
 import subprocess
 import sys
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi import Request
 
-from bi_contabilidade.atualizacao import ler_ultimo_log_carga
+from src.bi_contabilidade.atualizacao import ler_ultimo_log_carga
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 LOGS_DIR = ROOT_DIR / "logs"
@@ -52,9 +51,9 @@ def dashboard(request: Request):
     )
 
     return templates.TemplateResponse(
-        "dashboard.html",
-        {
-            "request": request,
+        request=request,
+        name="dashboard.html",
+        context={
             "carga": carga,
             "validacao": validacao,
             "balancete": balancete,
