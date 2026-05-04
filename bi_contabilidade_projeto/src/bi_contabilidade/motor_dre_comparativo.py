@@ -1,3 +1,4 @@
+import argparse
 import json
 from datetime import datetime
 from pathlib import Path
@@ -29,9 +30,14 @@ def montar_comparativo(periodo_base: str | None = None, periodo_comparacao: str 
 
     if periodo_base is None:
         periodo_base = periodos[-1]
+    if periodo_base not in periodos:
+        raise ValueError(f"Periodo base {periodo_base} nao encontrado. Periodos disponiveis: {periodos}")
+
     if periodo_comparacao is None:
         idx_base = periodos.index(periodo_base)
         periodo_comparacao = periodos[idx_base - 1] if idx_base > 0 else periodos[0]
+    if periodo_comparacao not in periodos:
+        raise ValueError(f"Periodo comparacao {periodo_comparacao} nao encontrado. Periodos disponiveis: {periodos}")
 
     fato_base = fato[fato["PERIODO"] == periodo_base].copy()
     fato_comp = fato[fato["PERIODO"] == periodo_comparacao].copy()
@@ -139,7 +145,15 @@ def salvar(grupo: pd.DataFrame, conta: pd.DataFrame, resumo: dict) -> None:
         json.dump(resumo, arquivo, ensure_ascii=False, indent=4)
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Gera comparativo mensal da DRE.")
+    parser.add_argument("--base", dest="periodo_base", default=None, help="Periodo base no formato YYYY-MM. Exemplo: 2026-01")
+    parser.add_argument("--comparacao", dest="periodo_comparacao", default=None, help="Periodo de comparacao no formato YYYY-MM. Exemplo: 2025-01")
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    grupo_df, conta_df, resumo_execucao = montar_comparativo()
+    args = parse_args()
+    grupo_df, conta_df, resumo_execucao = montar_comparativo(args.periodo_base, args.periodo_comparacao)
     salvar(grupo_df, conta_df, resumo_execucao)
     print(json.dumps({k: v for k, v in resumo_execucao.items() if k != "linhas"}, ensure_ascii=False, indent=4))
