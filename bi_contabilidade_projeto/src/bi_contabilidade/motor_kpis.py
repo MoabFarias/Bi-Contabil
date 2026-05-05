@@ -28,6 +28,11 @@ def valor_linha_dre(dre: dict, bloco: str, grupo: str, campo: str) -> float:
     return 0.0
 
 
+def somar_bloco(dre: dict, bloco: str, campo: str) -> float:
+    bloco_n = bloco.lower().strip()
+    return sum(float(l.get(campo, 0) or 0) for l in dre.get("linhas", []) if str(l.get("bloco", "")).lower().strip() == bloco_n)
+
+
 def buscar_operacional_periodo(operacional: dict, periodo: str) -> dict:
     for linha in operacional.get("series", []):
         if linha.get("periodo") == periodo:
@@ -41,6 +46,29 @@ def dividir(numerador: float, denominador: float) -> float | None:
     return numerador / denominador
 
 
+def montar_visao_gerencial(dre: dict, campo: str) -> dict:
+    receita_bruta_raw = valor_linha_dre(dre, "Receita Bruta", "Mercado interno", campo)
+    deducoes_raw = somar_bloco(dre, "Deduções da Receita Bruta", campo)
+    cpv_raw = valor_linha_dre(dre, "CPV", "CUSTO DOS PRODUTOS VENDIDOS", campo)
+
+    receita_bruta = abs(receita_bruta_raw)
+    deducoes = -abs(deducoes_raw)
+    receita_liquida = receita_bruta + deducoes
+    cpv = -abs(cpv_raw)
+    margem_bruta = receita_liquida + cpv
+
+    return {
+        "receita_bruta_raw": receita_bruta_raw,
+        "deducoes_raw": deducoes_raw,
+        "cpv_raw": cpv_raw,
+        "receita_bruta": receita_bruta,
+        "deducoes": deducoes,
+        "receita_liquida": receita_liquida,
+        "cpv": cpv,
+        "margem_bruta": margem_bruta,
+    }
+
+
 def montar_kpis() -> dict:
     dre = ler_json(DRE_COMPARATIVO_JSON, {"linhas": [], "periodo_base": None, "periodo_comparacao": None})
     operacional = ler_json(OPERACIONAL_JSON, {"series": [], "ultimo_periodo_com_movimento": {}})
@@ -51,25 +79,8 @@ def montar_kpis() -> dict:
     op_base = buscar_operacional_periodo(operacional, periodo_base) if periodo_base else {}
     op_comp = buscar_operacional_periodo(operacional, periodo_comparacao) if periodo_comparacao else {}
 
-    receita_bruta_base = valor_linha_dre(dre, "Receita Bruta", "Mercado interno", "valor_base")
-    receita_bruta_comp = valor_linha_dre(dre, "Receita Bruta", "Mercado interno", "valor_comparacao")
-    deducoes_base = sum(
-        float(l.get("valor_base", 0) or 0)
-        for l in dre.get("linhas", [])
-        if str(l.get("bloco", "")).lower().strip() == "deduções da receita bruta"
-    )
-    deducoes_comp = sum(
-        float(l.get("valor_comparacao", 0) or 0)
-        for l in dre.get("linhas", [])
-        if str(l.get("bloco", "")).lower().strip() == "deduções da receita bruta"
-    )
-    cpv_base = valor_linha_dre(dre, "CPV", "CUSTO DOS PRODUTOS VENDIDOS", "valor_base")
-    cpv_comp = valor_linha_dre(dre, "CPV", "CUSTO DOS PRODUTOS VENDIDOS", "valor_comparacao")
-
-    receita_liquida_base = receita_bruta_base - deducoes_base
-    receita_liquida_comp = receita_bruta_comp - deducoes_comp
-    margem_bruta_base = receita_liquida_base - cpv_base
-    margem_bruta_comp = receita_liquida_comp - cpv_comp
+    ger_base = montar_visao_gerencial(dre, "valor_base")
+    ger_comp = montar_visao_gerencial(dre, "valor_comparacao")
 
     ton_base = float(op_base.get("toneladas_vendidas", 0) or 0)
     ton_comp = float(op_comp.get("toneladas_vendidas", 0) or 0)
@@ -81,34 +92,26 @@ def montar_kpis() -> dict:
         "gerado_em": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "periodo_base": periodo_base,
         "periodo_comparacao": periodo_comparacao,
-        "metodologia": "Receita liquida = Receita Bruta - Deducoes. Margem bruta = Receita liquida - CPV. KPIs por volume usam toneladas vendidas e pecas vendidas mil.",
+        "metodologia": "Visao gerencial: receita bruta positiva, deducoes negativas, CPV negativo. Receita liquida = Receita Bruta + Deducoes. Margem bruta = Receita liquida + CPV.",
         "base": {
-            "receita_bruta": receita_bruta_base,
-            "deducoes": deducoes_base,
-            "receita_liquida": receita_liquida_base,
-            "cpv": cpv_base,
-            "margem_bruta": margem_bruta_base,
+            **ger_base,
             "toneladas_vendidas": ton_base,
             "pecas_vendidas_mil": pecas_base,
-            "receita_liquida_por_ton": dividir(receita_liquida_base, ton_base),
-            "cpv_por_ton": dividir(cpv_base, ton_base),
-            "margem_bruta_por_ton": dividir(margem_bruta_base, ton_base),
-            "receita_liquida_por_mil_pecas": dividir(receita_liquida_base, pecas_base),
+            "receita_liquida_por_ton": dividir(ger_base["receita_liquida"], ton_base),
+            "cpv_por_ton": dividir(ger_base["cpv"], ton_base),
+            "margem_bruta_por_ton": dividir(ger_base["margem_bruta"], ton_base),
+            "receita_liquida_por_mil_pecas": dividir(ger_base["receita_liquida"], pecas_base),
             "intercompany_pct_preformas": op_base.get("intercompany_pct_preformas"),
             "gap_ton_producao_vs_venda": op_base.get("gap_ton_producao_vs_venda"),
         },
         "comparacao": {
-            "receita_bruta": receita_bruta_comp,
-            "deducoes": deducoes_comp,
-            "receita_liquida": receita_liquida_comp,
-            "cpv": cpv_comp,
-            "margem_bruta": margem_bruta_comp,
+            **ger_comp,
             "toneladas_vendidas": ton_comp,
             "pecas_vendidas_mil": pecas_comp,
-            "receita_liquida_por_ton": dividir(receita_liquida_comp, ton_comp),
-            "cpv_por_ton": dividir(cpv_comp, ton_comp),
-            "margem_bruta_por_ton": dividir(margem_bruta_comp, ton_comp),
-            "receita_liquida_por_mil_pecas": dividir(receita_liquida_comp, pecas_comp),
+            "receita_liquida_por_ton": dividir(ger_comp["receita_liquida"], ton_comp),
+            "cpv_por_ton": dividir(ger_comp["cpv"], ton_comp),
+            "margem_bruta_por_ton": dividir(ger_comp["margem_bruta"], ton_comp),
+            "receita_liquida_por_mil_pecas": dividir(ger_comp["receita_liquida"], pecas_comp),
             "intercompany_pct_preformas": op_comp.get("intercompany_pct_preformas"),
             "gap_ton_producao_vs_venda": op_comp.get("gap_ton_producao_vs_venda"),
         },
