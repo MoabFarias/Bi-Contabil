@@ -28,6 +28,16 @@ COLUNAS_BASE_OPERACIONAL = [
     "toneladas_vendidas",
     "toneladas_produzidas",
 ]
+COLUNAS_MOVIMENTO = [
+    "preformas_vendidas_mil",
+    "garrafas_vendidas_mil",
+    "bonificacao_mil",
+    "intercompany_preformas_mil",
+    "preformas_produzidas_mil",
+    "garrafas_produzidas_mil",
+    "toneladas_vendidas",
+    "toneladas_produzidas",
+]
 
 
 def carregar_configuracao() -> dict:
@@ -199,6 +209,16 @@ def serie_metricas(df: pd.DataFrame, partes: list[str]) -> pd.Series:
     return df[coluna].map(normalizar_numero)
 
 
+def enriquecer_operacional(saida: pd.DataFrame) -> pd.DataFrame:
+    saida = saida.groupby("periodo", as_index=False).sum(numeric_only=True)
+    saida["pecas_vendidas_mil"] = saida["preformas_vendidas_mil"] + saida["garrafas_vendidas_mil"] + saida["bonificacao_mil"] + saida["intercompany_preformas_mil"]
+    saida["pecas_produzidas_mil"] = saida["preformas_produzidas_mil"] + saida["garrafas_produzidas_mil"]
+    saida["gap_ton_producao_vs_venda"] = saida["toneladas_produzidas"] - saida["toneladas_vendidas"]
+    saida["intercompany_pct_preformas"] = saida.apply(lambda r: 0 if r["preformas_vendidas_mil"] == 0 else (r["intercompany_preformas_mil"] / r["preformas_vendidas_mil"]) * 100, axis=1)
+    saida["tem_movimento"] = saida[COLUNAS_MOVIMENTO].abs().sum(axis=1) > 0
+    return saida
+
+
 def montar_operacional() -> tuple[pd.DataFrame, dict]:
     df = carregar_operacional()
     if set(COLUNAS_BASE_OPERACIONAL).issubset(set(df.columns)):
@@ -214,13 +234,14 @@ def montar_operacional() -> tuple[pd.DataFrame, dict]:
         saida["garrafas_produzidas_mil"] = serie_metricas(df, ["botella", "produccion", "mil"])
         saida["toneladas_vendidas"] = serie_metricas(df, ["tonelada", "ventas", "ton"])
         saida["toneladas_produzidas"] = serie_metricas(df, ["tonelado", "produccion", "ton"])
-    saida = saida.groupby("periodo", as_index=False).sum(numeric_only=True)
-    saida["pecas_vendidas_mil"] = saida["preformas_vendidas_mil"] + saida["garrafas_vendidas_mil"] + saida["bonificacao_mil"] + saida["intercompany_preformas_mil"]
-    saida["pecas_produzidas_mil"] = saida["preformas_produzidas_mil"] + saida["garrafas_produzidas_mil"]
-    saida["gap_ton_producao_vs_venda"] = saida["toneladas_produzidas"] - saida["toneladas_vendidas"]
-    saida["intercompany_pct_preformas"] = saida.apply(lambda r: 0 if r["preformas_vendidas_mil"] == 0 else (r["intercompany_preformas_mil"] / r["preformas_vendidas_mil"]) * 100, axis=1)
+
+    saida = enriquecer_operacional(saida)
     periodos = sorted(saida["periodo"].tolist())
     ultimo = saida[saida["periodo"] == periodos[-1]].iloc[0].to_dict() if periodos else {}
+    saida_mov = saida[saida["tem_movimento"]].copy()
+    periodos_mov = sorted(saida_mov["periodo"].tolist())
+    ultimo_mov = saida_mov[saida_mov["periodo"] == periodos_mov[-1]].iloc[0].to_dict() if periodos_mov else {}
+
     resumo = {
         "status": "sucesso",
         "gerado_em": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -230,8 +251,12 @@ def montar_operacional() -> tuple[pd.DataFrame, dict]:
         "coluna_periodo": df.attrs.get("coluna_periodo"),
         "periodo_inicio": periodos[0] if periodos else None,
         "periodo_fim": periodos[-1] if periodos else None,
+        "periodo_inicio_com_movimento": periodos_mov[0] if periodos_mov else None,
+        "periodo_fim_com_movimento": periodos_mov[-1] if periodos_mov else None,
         "periodos_disponiveis": periodos,
+        "periodos_com_movimento": periodos_mov,
         "ultimo_periodo": ultimo,
+        "ultimo_periodo_com_movimento": ultimo_mov,
         "series": saida.to_dict(orient="records"),
     }
     return saida, resumo
