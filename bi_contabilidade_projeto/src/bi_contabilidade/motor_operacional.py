@@ -1,4 +1,5 @@
 import json
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -10,6 +11,11 @@ LOGS_DIR = ROOT_DIR / "logs"
 OUTPUTS_DIR = ROOT_DIR / "outputs"
 OPERACIONAL_JSON = LOGS_DIR / "operacional_resumo.json"
 OPERACIONAL_XLSX = OUTPUTS_DIR / "operacional_resumo.xlsx"
+
+MESES = {
+    "janeiro": "01", "fevereiro": "02", "marco": "03", "março": "03", "abril": "04", "maio": "05", "junho": "06",
+    "julho": "07", "agosto": "08", "setembro": "09", "outubro": "10", "novembro": "11", "dezembro": "12",
+}
 
 
 def carregar_configuracao() -> dict:
@@ -26,11 +32,30 @@ def normalizar_numero(valor):
         return 0.0
     if isinstance(valor, (int, float)):
         return float(valor)
-    texto = str(valor).strip().replace(".", "").replace(",", ".").replace("-", "0")
+    texto = str(valor).strip().replace(".", "").replace(",", ".")
+    if texto in ["", "-", "nan", "None"]:
+        return 0.0
     try:
         return float(texto)
     except ValueError:
         return 0.0
+
+
+def converter_periodo(valor) -> str | None:
+    if pd.isna(valor):
+        return None
+    texto = str(valor).strip().lower()
+    texto = texto.replace("/", "-").replace("_", "-").replace(" ", "-")
+    for mes_nome, mes_num in MESES.items():
+        if texto.startswith(mes_nome):
+            match = re.search(r"(\d{2}|\d{4})", texto)
+            if not match:
+                return None
+            ano = match.group(1)
+            if len(ano) == 2:
+                ano = "20" + ano
+            return f"{ano}-{mes_num}"
+    return None
 
 
 def localizar_arquivo_operacional(base_path: Path) -> Path | None:
@@ -38,10 +63,53 @@ def localizar_arquivo_operacional(base_path: Path) -> Path | None:
     for extensao in ("*.xlsx", "*.xls"):
         candidatos.extend(base_path.glob(extensao))
     for arquivo in candidatos:
-        nome = arquivo.stem.lower()
-        if "volume" in nome and ("producao" in nome or "produção" in nome) and "venda" in nome:
+        nome = normalizar_coluna(arquivo.stem)
+        if "volume" in nome and "producao" in nome and "venda" in nome:
             return arquivo
     return None
+
+
+def localizar_inicio_tabela(bruto: pd.DataFrame) -> tuple[int, int]:
+    melhor_linha = None
+    melhor_coluna = None
+    melhor_qtd = 0
+    for col in bruto.columns:
+        periodos = bruto[col].map(converter_periodo)
+        qtd = int(periodos.notna().sum())
+        if qtd > melhor_qtd:
+            melhor_qtd = qtd
+            melhor_coluna = int(col)
+            indices = periodos[periodos.notna()].index.tolist()
+            melhor_linha = int(indices[0]) if indices else None
+    if melhor_linha is None or melhor_coluna is None or melhor_qtd == 0:
+        raise ValueError("Nao foi possivel localizar coluna de periodo operacional (ex.: janeiro-25).")
+    return melhor_linha, melhor_coluna
+
+
+def montar_nome_colunas(bruto: pd.DataFrame, linha_inicio: int, coluna_inicio: int) -> list[str]:
+    linhas_cabecalho = list(range(max(0, linha_inicio - 3), linha_inicio))
+    nomes = []
+    ultima_parte_por_coluna = {}
+    for col in bruto.columns:
+        if int(col) == coluna_inicio:
+            nomes.append("periodo_texto")
+            continue
+        partes = []
+        for linha in linhas_cabecalho:
+            valor = bruto.iat[linha, int(col)] if int(col) < bruto.shape[1] else None
+            if pd.isna(valor) or str(valor).strip() == "":
+                continue
+            partes.append(str(valor).strip())
+        if not partes:
+            partes = [f"coluna_{col}"]
+        nome = " | ".join(partes)
+        if nome in ultima_parte_por_coluna:
+            ultima_parte_por_coluna[nome] += 1
+            nome = f"{nome} | {ultima_parte_por_coluna[nome]}"
+        else:
+            ultima_parte_por_coluna[nome] = 1
+        nomes.append(nome)
+    return nomes
 
 
 def carregar_operacional() -> pd.DataFrame:
@@ -52,49 +120,17 @@ def carregar_operacional() -> pd.DataFrame:
         raise FileNotFoundError(f"Arquivo operacional de volume/producao/vendas nao encontrado em: {base_path}")
 
     bruto = pd.read_excel(arquivo, sheet_name=0, header=None)
-    if len(bruto) < 4:
-        raise ValueError("Arquivo operacional precisa ter ao menos 4 linhas de cabecalho/dados.")
+    linha_inicio, coluna_periodo = localizar_inicio_tabela(bruto)
+    nomes = montar_nome_colunas(bruto, linha_inicio, coluna_periodo)
 
-    grupo = bruto.iloc[0].ffill().fillna("").astype(str).str.strip().tolist()
-    metrica = bruto.iloc[1].fillna("").astype(str).str.strip().tolist()
-    unidade = bruto.iloc[2].fillna("").astype(str).str.strip().tolist()
-
-    nomes = []
-    for i, (g, m, u) in enumerate(zip(grupo, metrica, unidade)):
-        if i == 0:
-            nomes.append("periodo_texto")
-        else:
-            partes = [p for p in [g, m, u] if p]
-            nomes.append(" | ".join(partes))
-
-    dados = bruto.iloc[3:].copy()
-    dados.columns = nomes
+    dados = bruto.iloc[linha_inicio:].copy()
+    dados.columns = nomes[: len(dados.columns)]
     dados = dados.dropna(how="all")
-    dados = dados[dados["periodo_texto"].notna()].copy()
-    dados["periodo_texto"] = dados["periodo_texto"].astype(str).str.strip()
-    dados = dados[~dados["periodo_texto"].isin(["", "nan", "None"])]
-
-    mapa_mes = {
-        "janeiro": "01", "fevereiro": "02", "marco": "03", "março": "03", "abril": "04", "maio": "05", "junho": "06",
-        "julho": "07", "agosto": "08", "setembro": "09", "outubro": "10", "novembro": "11", "dezembro": "12",
-    }
-
-    def converter_periodo(valor: str) -> str | None:
-        texto = valor.strip().lower()
-        if "-" not in texto:
-            return None
-        mes, ano = texto.split("-", 1)
-        mes_num = mapa_mes.get(mes)
-        if mes_num is None:
-            return None
-        ano = ano.strip()
-        if len(ano) == 2:
-            ano = "20" + ano
-        return f"{ano}-{mes_num}"
-
     dados["periodo"] = dados["periodo_texto"].map(converter_periodo)
     dados = dados[dados["periodo"].notna()].copy()
     dados.attrs["arquivo_operacional"] = str(arquivo)
+    dados.attrs["linha_inicio_dados"] = linha_inicio + 1
+    dados.attrs["coluna_periodo"] = coluna_periodo + 1
     return dados
 
 
@@ -135,6 +171,8 @@ def montar_operacional() -> tuple[pd.DataFrame, dict]:
         "status": "sucesso",
         "gerado_em": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "arquivo_origem": df.attrs.get("arquivo_operacional"),
+        "linha_inicio_dados": df.attrs.get("linha_inicio_dados"),
+        "coluna_periodo": df.attrs.get("coluna_periodo"),
         "periodo_inicio": periodos[0] if periodos else None,
         "periodo_fim": periodos[-1] if periodos else None,
         "periodos_disponiveis": periodos,
