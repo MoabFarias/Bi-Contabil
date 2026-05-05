@@ -11,6 +11,7 @@ LOGS_DIR = ROOT_DIR / "logs"
 DRE_XLSX = OUTPUT_DIR / "dre_gerencial.xlsx"
 DRE_JSON = LOGS_DIR / "dre_resumo.json"
 DRE_DETALHE_JSON = LOGS_DIR / "dre_detalhe.json"
+TIPOS_LANCAMENTO_EXCLUIR_DRE = {"EF"}
 
 
 def carregar_configuracao() -> dict:
@@ -85,6 +86,16 @@ def preparar_fato_dre(abas: dict[str, pd.DataFrame]) -> pd.DataFrame:
     fato["VALOR_CRE_N"] = pd.to_numeric(fato["VALOR_CRE"], errors="coerce").fillna(0)
     fato["VALOR_LIQ_N"] = pd.to_numeric(fato["VALOR_LIQ"], errors="coerce").fillna(0)
 
+    qtd_antes_tipo = len(fato)
+    tipos_excluidos_encontrados = {}
+    if "CTIPO" in fato.columns:
+        fato["CTIPO_N"] = serie_normalizada(fato["CTIPO"]).str.upper()
+        mascara_excluir = fato["CTIPO_N"].isin(TIPOS_LANCAMENTO_EXCLUIR_DRE)
+        tipos_excluidos_encontrados = fato.loc[mascara_excluir, "CTIPO_N"].value_counts(dropna=False).to_dict()
+        fato = fato.loc[~mascara_excluir].copy()
+    fato.attrs["qtd_lancamentos_excluidos_tipo_dre"] = qtd_antes_tipo - len(fato)
+    fato.attrs["tipos_lancamento_excluidos_dre"] = tipos_excluidos_encontrados
+
     limite = obter_limite_visualizacao(config)
     if limite:
         fato = fato[fato["PERIODO"] <= limite].copy()
@@ -98,8 +109,6 @@ def preparar_fato_dre(abas: dict[str, pd.DataFrame]) -> pd.DataFrame:
     fato = fato.merge(dim_conta[colunas_dim], on="CONTA_N", how="left")
     fato = aplicar_param_dre(fato, param)
 
-    # Valor gerencial: respeita o sinal do parametro quando houver.
-    # Se sinal = C, credito aumenta resultado; se D, debito aumenta resultado.
     sinal = fato.get("PARAM_sinal")
     if sinal is not None:
         sinal_norm = sinal.astype("string").str.upper()
@@ -115,29 +124,13 @@ def montar_dre() -> tuple[pd.DataFrame, pd.DataFrame, dict, dict]:
     abas = carregar_excel()
     fato = preparar_fato_dre(abas)
 
-    grupo_cols = [
-        "PARAM_bloco",
-        "PARAM_grupo",
-        "PARAM_ordem_bloco",
-        "PARAM_ordem_grupo",
-        "PARAM_natureza",
-        "PARAM_sinal",
-    ]
+    grupo_cols = ["PARAM_bloco", "PARAM_grupo", "PARAM_ordem_bloco", "PARAM_ordem_grupo", "PARAM_natureza", "PARAM_sinal"]
     grupo_cols = [c for c in grupo_cols if c in fato.columns]
 
-    dre = (
-        fato.groupby(["PERIODO"] + grupo_cols, dropna=False)
-        .agg(valor=("VALOR_GERENCIAL", "sum"), debito=("VALOR_DEB_N", "sum"), credito=("VALOR_CRE_N", "sum"), qtd_lancamentos=("CODLANC", "count"))
-        .reset_index()
-    )
+    dre = fato.groupby(["PERIODO"] + grupo_cols, dropna=False).agg(valor=("VALOR_GERENCIAL", "sum"), debito=("VALOR_DEB_N", "sum"), credito=("VALOR_CRE_N", "sum"), qtd_lancamentos=("CODLANC", "count")).reset_index()
+    conta = fato.groupby(["PERIODO"] + grupo_cols + ["CONTA_N", "DESCRICAO"], dropna=False).agg(valor=("VALOR_GERENCIAL", "sum"), debito=("VALOR_DEB_N", "sum"), credito=("VALOR_CRE_N", "sum"), qtd_lancamentos=("CODLANC", "count")).reset_index()
 
-    conta = (
-        fato.groupby(["PERIODO"] + grupo_cols + ["CONTA_N", "DESCRICAO"], dropna=False)
-        .agg(valor=("VALOR_GERENCIAL", "sum"), debito=("VALOR_DEB_N", "sum"), credito=("VALOR_CRE_N", "sum"), qtd_lancamentos=("CODLANC", "count"))
-        .reset_index()
-    )
-
-    detalhe_cols = ["CODLANC", "PERIODO", "LDATA", "CONTA_N", "DESCRICAO", "DOCNO", "DSC_COMPLEMENTO", "VALOR_DEB_N", "VALOR_CRE_N", "VALOR_LIQ_N", "VALOR_GERENCIAL"] + grupo_cols
+    detalhe_cols = ["CODLANC", "PERIODO", "LDATA", "CONTA_N", "DESCRICAO", "DOCNO", "DSC_COMPLEMENTO", "CTIPO", "VALOR_DEB_N", "VALOR_CRE_N", "VALOR_LIQ_N", "VALOR_GERENCIAL"] + grupo_cols
     detalhe_cols = [c for c in detalhe_cols if c in fato.columns]
     detalhe = fato[detalhe_cols].copy()
 
@@ -150,34 +143,18 @@ def montar_dre() -> tuple[pd.DataFrame, pd.DataFrame, dict, dict]:
         "qtd_linhas_dre": int(len(dre)),
         "qtd_contas_analiticas": int(conta["CONTA_N"].nunique()) if not conta.empty else 0,
         "qtd_lancamentos_dre": int(len(detalhe)),
+        "qtd_lancamentos_excluidos_tipo_dre": int(fato.attrs.get("qtd_lancamentos_excluidos_tipo_dre", 0)),
+        "tipos_lancamento_excluidos_dre": fato.attrs.get("tipos_lancamento_excluidos_dre", {}),
         "valor_total_dre": float(dre["valor"].sum()) if not dre.empty else 0.0,
     }
 
-    detalhe_json = {
-        "grupos": []
-    }
+    detalhe_json = {"grupos": []}
     for _, row in dre.sort_values(["PARAM_ordem_bloco", "PARAM_ordem_grupo", "PARAM_bloco", "PARAM_grupo"], na_position="last").iterrows():
-        filtro = (conta["PERIODO"] == row["PERIODO"])
+        filtro = conta["PERIODO"] == row["PERIODO"]
         if "PARAM_grupo" in conta.columns:
             filtro &= conta["PARAM_grupo"].astype("string").fillna("").eq(str(row.get("PARAM_grupo", "")))
         contas = conta[filtro].sort_values("valor", key=lambda s: s.abs(), ascending=False).head(80)
-        detalhe_json["grupos"].append({
-            "periodo": row.get("PERIODO"),
-            "bloco": row.get("PARAM_bloco"),
-            "grupo": row.get("PARAM_grupo"),
-            "valor": float(row.get("valor", 0) or 0),
-            "contas": [
-                {
-                    "conta": c.get("CONTA_N"),
-                    "descricao": c.get("DESCRICAO"),
-                    "valor": float(c.get("valor", 0) or 0),
-                    "debito": float(c.get("debito", 0) or 0),
-                    "credito": float(c.get("credito", 0) or 0),
-                    "qtd_lancamentos": int(c.get("qtd_lancamentos", 0) or 0),
-                }
-                for _, c in contas.iterrows()
-            ],
-        })
+        detalhe_json["grupos"].append({"periodo": row.get("PERIODO"), "bloco": row.get("PARAM_bloco"), "grupo": row.get("PARAM_grupo"), "valor": float(row.get("valor", 0) or 0), "contas": [{"conta": c.get("CONTA_N"), "descricao": c.get("DESCRICAO"), "valor": float(c.get("valor", 0) or 0), "debito": float(c.get("debito", 0) or 0), "credito": float(c.get("credito", 0) or 0), "qtd_lancamentos": int(c.get("qtd_lancamentos", 0) or 0)} for _, c in contas.iterrows()]})
 
     return dre, detalhe, resumo, detalhe_json
 
