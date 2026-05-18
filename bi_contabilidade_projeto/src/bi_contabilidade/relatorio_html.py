@@ -9,7 +9,7 @@ from typing import Any
 BASE_CSS = """
 body {
   margin: 0;
-  font-family: \"Segoe UI\", Tahoma, sans-serif;
+  font-family: "Segoe UI", Tahoma, sans-serif;
   background: linear-gradient(180deg, #f4efe6 0%, #fbfaf8 100%);
   color: #18222d;
 }
@@ -144,23 +144,24 @@ def _render_indicadores(indicadores: list[dict[str, Any]]) -> str:
 
 def _base_html(titulo: str, subtitulo: str, conteudo: str) -> str:
     return f"""<!DOCTYPE html>
-<html lang=\"pt-BR\">
+<html lang="pt-BR">
 <head>
-  <meta charset=\"utf-8\">
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{html.escape(titulo)}</title>
   <style>{BASE_CSS}</style>
 </head>
 <body>
-  <div class=\"shell\">
-    <section class=\"hero\">
+  <div class="shell">
+    <section class="hero">
       <h1>{html.escape(titulo)}</h1>
       <p>{html.escape(subtitulo)}</p>
     </section>
-    <nav class=\"nav\">
-      <a href=\"index.html\">Resumo</a>
-      <a href=\"validacao_extracoes.html\">Validação das extrações</a>
-      <a href=\"validacao_numerica.html\">Validação numérica</a>
+    <nav class="nav">
+      <a href="index.html">Resumo</a>
+      <a href="validacao_extracoes.html">Validação das extrações</a>
+      <a href="validacao_numerica.html">Validação numérica</a>
+      <a href="validacao_modelo.html">Validação do modelo</a>
     </nav>
     {conteudo}
   </div>

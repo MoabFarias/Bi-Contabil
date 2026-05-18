@@ -1,82 +1,123 @@
 # Projeto BI Contabilidade
 
-Este projeto monta uma base inicial de BI contábil a partir de:
+Este projeto consolida a Fase 2 do BI contábil com foco em:
 
-- `balancete 12-2024.txt`
-- `Data set - contabilidade-gerencial-html.xlsx`
+- leitura do balancete em `TXT`
+- leitura do arquivo contábil em `XLSX`
+- padronização da fato e das dimensões
+- validação estrutural, numérica e relacional
+- geração de páginas `HTML` para conferência
 
-O fluxo foi pensado para trabalhar em etapas:
+## Arquivos de origem atuais
 
-1. Validar a extração dos arquivos
-2. Padronizar e mapear colunas
-3. Validar coerência numérica contábil
-4. Gerar páginas HTML com os achados
-5. Produzir bases tratadas para a próxima etapa visual
+- `..\balancete 12-2024.txt`
+- `..\Data set - contabilidade-gerencial-html.xlsx`
+
+O `TXT` atual é tabulado e o `XLSX` traz as planilhas:
+
+- `FatoLancamentoContabil`
+- `DimConta`
+- `DimCentroCusto`
+- `DimItemContaAux`
+- `DimContaAux`
+- `ParamBP_DRE`
+- `Dim_CUSTO_PRODUCAO_MAPA`
+
+## Ponto importante de período
+
+Pela amostra do arquivo Excel, há lançamentos com datas de `2025`, enquanto o balancete informado no nome do arquivo está em `12-2024`.
+
+Por isso, a pipeline:
+
+- continua validando cada base individualmente
+- só faz reconciliação direta entre balancete e transações quando detecta período compatível
 
 ## Estrutura
 
 - `run_pipeline.py`: ponto de entrada do processo
-- `config/mapeamento_exemplo.json`: configuração opcional para aba e nomes de colunas
-- `src/bi_contabilidade/`: módulos Python de ingestão, validação e geração HTML
-- `saida/`: pasta sugerida para relatórios e arquivos tratados
+- `executar_pipeline_real.cmd`: atalho para execução via `cmd`
+- `config/contabilidade_gerencial_real.json`: mapeamento real do dataset atual
+- `config/mapeamento_exemplo.json`: modelo genérico para adaptações futuras
+- `src/bi_contabilidade/`: ingestão, validações e relatórios
+- `saida/`: relatórios e bases tratadas
 
-## Como executar
+## Como executar no cmd
 
-Crie um ambiente com as dependências e execute:
+Use `cmd`, não PowerShell.
 
-```bash
-python run_pipeline.py ^
-  --balancete "..\balancete 12-2024.txt" ^
-  --transacoes "..\Data set - contabilidade-gerencial-html.xlsx" ^
-  --config "config\mapeamento_exemplo.json" ^
-  --saida "saida"
+### Opção 1
+
+```cmd
+cd /d C:\Users\mfarias\OneDrive - CRISTALPET\POWER BI\Projetos\Contabilidade\Data driven - Gestão\bi_contabilidade_projeto
+executar_pipeline_real.cmd
 ```
 
-No PowerShell, uma versão equivalente:
+### Opção 2
 
-```powershell
-python .\run_pipeline.py `
-  --balancete "..\balancete 12-2024.txt" `
-  --transacoes "..\Data set - contabilidade-gerencial-html.xlsx" `
-  --config ".\config\mapeamento_exemplo.json" `
-  --saida ".\saida"
+```cmd
+cd /d C:\Users\mfarias\OneDrive - CRISTALPET\POWER BI\Projetos\Contabilidade\Data driven - Gestão\bi_contabilidade_projeto
+python run_pipeline.py --balancete "..\balancete 12-2024.txt" --transacoes "..\Data set - contabilidade-gerencial-html.xlsx" --config "config\contabilidade_gerencial_real.json" --saida "saida"
 ```
 
-## Entregas geradas
+## Saídas oficiais da Fase 2
 
-Após a execução, o projeto gera:
+### Relatórios
 
-- `saida/index.html`: página inicial com resumo executivo
-- `saida/validacao_extracoes.html`: diagnóstico da qualidade das extrações
-- `saida/validacao_numerica.html`: reconciliações e consistência contábil
-- `saida/dados_tratados/balancete_normalizado.csv`
-- `saida/dados_tratados/transacoes_normalizadas.csv`
+- `saida/index.html`
+- `saida/validacao_extracoes.html`
+- `saida/validacao_numerica.html`
+- `saida/validacao_modelo.html`
+
+### Arquivos de controle
+
 - `saida/perfil_abas_transacoes.csv`
 - `saida/resumo_execucao.json`
+- `saida/contrato_base_analitica.json`
 
-## Mapeamento de colunas
+### Bases tratadas
 
-Como o formato real pode variar, o pipeline tenta mapear automaticamente nomes como:
+- `saida/dados_tratados/balancete_normalizado.csv`
+- `saida/dados_tratados/transacoes_normalizadas.csv`
+- `saida/dados_tratados/fato_lancamento_contabil.csv`
+- `saida/dados_tratados/dim_conta.csv`
+- `saida/dados_tratados/dim_centro_custo.csv`
+- `saida/dados_tratados/dim_conta_aux.csv`
+- `saida/dados_tratados/dim_item_conta_aux.csv`
+- `saida/dados_tratados/param_bp_dre.csv`
+- `saida/dados_tratados/dim_custo_producao_mapa.csv`
 
-- Transações: `data`, `conta`, `historico`, `debito`, `credito`, `valor`, `lancamento`, `documento`
-- Balancete: `conta`, `descricao`, `saldo inicial`, `debito`, `credito`, `saldo final`
+## Validações implementadas
 
-Se os nomes estiverem diferentes no seu arquivo, ajuste o arquivo `config/mapeamento_exemplo.json`.
+### Balancete
 
-## Próximos passos sugeridos
+- coerência entre saldo inicial, débito, crédito e saldo final
+- amostra das contas após a padronização
 
-1. Rodar o pipeline e revisar o perfil das colunas detectadas
-2. Ajustar o mapeamento caso alguma aba ou coluna não seja reconhecida corretamente
-3. Validar as diferenças apontadas no HTML
-4. Evoluir para páginas gerenciais por tema:
-   - visão executiva
-   - DRE gerencial
-   - balanço patrimonial
-   - centro de custo
-   - contas contábeis com maior variação
+### Fato contábil
 
-## Observações
+- fechamento global débito x crédito
+- conferência de `valor_liquido = debito - credito`
+- fechamento por lançamento
+- maiores movimentos por conta
+- qualidade e faixa de datas
 
-- O pipeline preserva os arquivos de origem e trabalha em cópias tratadas.
-- A lógica de reconciliação do balancete tenta identificar automaticamente a convenção de sinal mais compatível com os dados.
-- Caso o `TXT` venha em layout posicional, o parser aplica uma leitura heurística baseada em separação por múltiplos espaços.
+### Modelo analítico
+
+- fato versus `DimConta`
+- obrigatoriedade de conta auxiliar
+- fato versus `DimContaAux`
+- fato versus `DimItemContaAux`
+- centro de custo nas contas 3 e 4
+- cobertura de `ParamBP_DRE`
+- cobertura de `Dim_CUSTO_PRODUCAO_MAPA`
+
+## Próxima fase sugerida
+
+Com a camada analítica estabilizada, a próxima evolução natural é criar a interface web consumindo os CSVs tratados, começando por:
+
+- resumo executivo
+- validação das extrações
+- validação numérica
+- DRE gerencial
+- balanço patrimonial
+- centro de custo

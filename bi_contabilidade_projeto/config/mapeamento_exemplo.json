@@ -1,18 +1,37 @@
 {
   "planilha_transacoes": "",
+  "planilhas_modelo": {
+    "fato_lancamento_contabil": "",
+    "dim_conta": "",
+    "dim_centro_custo": "",
+    "dim_item_conta_aux": "",
+    "dim_conta_aux": "",
+    "param_bp_dre": "",
+    "dim_custo_producao_mapa": ""
+  },
   "colunas_transacoes": {
     "id_lancamento": "",
+    "empresa": "",
+    "filial": "",
     "data_lancamento": "",
     "conta_contabil": "",
+    "versao": "",
+    "conta_auxiliar": "",
+    "item_conta_auxiliar": "",
     "descricao": "",
     "documento": "",
     "centro_custo": "",
     "debito": "",
     "credito": "",
-    "valor": "",
-    "tipo_dc": ""
+    "valor_liquido": "",
+    "codigo_origem": "",
+    "codigo_historico": "",
+    "codigo_secundario": "",
+    "tipo_dc": "",
+    "classe_conta": ""
   },
   "colunas_balancete": {
+    "codigo_reduzido": "",
     "conta_contabil": "",
     "descricao_conta": "",
     "saldo_inicial": "",

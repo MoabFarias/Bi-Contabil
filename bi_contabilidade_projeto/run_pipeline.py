@@ -21,7 +21,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--config",
-        default=str(BASE_DIR / "config" / "mapeamento_exemplo.json"),
+        default=str(BASE_DIR / "config" / "contabilidade_gerencial_real.json"),
         help="Arquivo JSON opcional com aba e mapeamento de colunas.",
     )
     parser.add_argument(

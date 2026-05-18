@@ -1,0 +1,42 @@
+{
+  "planilha_transacoes": "FatoLancamentoContabil",
+  "planilhas_modelo": {
+    "fato_lancamento_contabil": "FatoLancamentoContabil",
+    "dim_conta": "DimConta",
+    "dim_centro_custo": "DimCentroCusto",
+    "dim_item_conta_aux": "DimItemContaAux",
+    "dim_conta_aux": "DimContaAux",
+    "param_bp_dre": "ParamBP_DRE",
+    "dim_custo_producao_mapa": "Dim_CUSTO_PRODUCAO_MAPA"
+  },
+  "colunas_transacoes": {
+    "id_lancamento": "codlanc",
+    "empresa": "empresa",
+    "filial": "filial",
+    "data_lancamento": "ldata",
+    "conta_contabil": "conta",
+    "versao": "cod_versao",
+    "centro_custo": "ccusto",
+    "conta_auxiliar": "cnt_aux",
+    "item_conta_auxiliar": "item_cntaux",
+    "debito": "valor_deb",
+    "credito": "valor_cre",
+    "valor_liquido": "valor_liq",
+    "descricao": "dsc_complemento",
+    "documento": "docno",
+    "codigo_origem": "codorigem",
+    "codigo_historico": "codhist",
+    "codigo_secundario": "cod_secundario",
+    "tipo_dc": "ctipo",
+    "classe_conta": "classe_conta"
+  },
+  "colunas_balancete": {
+    "codigo_reduzido": "reduzido",
+    "conta_contabil": "conta",
+    "descricao_conta": "denominacao",
+    "saldo_inicial": "saldo_inicial",
+    "debito": "debito",
+    "credito": "credito",
+    "saldo_final": "saldo_final"
+  }
+}
